@@ -1,0 +1,6 @@
+@Budgetly.API_HostAddress = http://localhost:5028
+
+GET {{Budgetly.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
