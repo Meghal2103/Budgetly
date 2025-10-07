@@ -9,6 +9,7 @@ dist/
 tmp/
 out-tsc/
 bazel-out/
+.angular/
 
 # Node
 node_modules/
@@ -34,14 +35,12 @@ yarn-error.log*
 .history/
 
 # Miscellaneous
-.angular/cache/
 .sass-cache/
 /connect.lock
 /coverage
 /libpeerconnection.log
 testem.log
 /typings
-**/appsettings.json
 
 # System files
 .DS_Store
@@ -50,6 +49,8 @@ Thumbs.db
 #########################
 # .NET / Visual Studio  #
 #########################
+
+appsettings.json
 
 # Build results
 [Bb]in/

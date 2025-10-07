@@ -33,7 +33,7 @@ namespace Budgetly.Infrastructure.Services
                 Subject = new ClaimsIdentity(
                     new[] {
                         new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Name, user.FirstName),
+                        new Claim(ClaimTypes.Name, user.FirstName + user.LastName),
                         new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     }),

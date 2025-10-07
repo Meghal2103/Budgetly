@@ -66,6 +66,18 @@ namespace Budgetly.API
 
             services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClentApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200")
+                              .AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .AllowCredentials();
+                    });
+            });
+
             return services;
         }
     }
