@@ -1,1 +1,45 @@
-<p>login works!</p>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 81vh;">
+    <div class="card shadow-sm rounded-4 p-4 my-5" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center mb-4 fw-bold text-muted">Login to LibraryOS</h3>
+
+        <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" [(ngModel)]="credential.email" required email #email="ngModel">
+                </div>
+                <div *ngIf="email.touched">
+                    <small class="text-danger" *ngIf="email.errors?.['required']">Required.</small>
+                    <small class="text-danger" *ngIf="email.errors?.['email']">Invalid Email</small>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" [(ngModel)]="credential.password" required #password="ngModel">
+                </div>
+                <div *ngIf="password.touched">
+                    <small class="text-danger" *ngIf="password.errors?.['required']">Required.</small>
+                </div>
+            </div>
+
+            <div class="d-grid mb-2">
+                <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button>
+            </div>
+
+            <div>
+                <small class="text-muted">Don't have an account? <a routerLink="/registration" class="text-decoration-none">Register here</a></small>
+            </div>
+            <div>
+                <small class="text-muted">Forgot Password? <a routerLink="/forgot-password" class="text-decoration-none">Reset here</a></small>
+            </div>
+        </form>
+    </div>
+</div>

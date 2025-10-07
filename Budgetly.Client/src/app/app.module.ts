@@ -7,6 +7,7 @@ import { SharedModule } from './shared/shared.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthModule } from './auth/auth.module';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     imports: [
         BrowserModule,
         AppRoutingModule,
+        CoreModule,
         SharedModule,
         AuthModule
     ],
