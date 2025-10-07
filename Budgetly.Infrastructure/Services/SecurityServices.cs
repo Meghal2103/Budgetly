@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Budgetly.Core.Entities;
-using Budgetly.Core.Interfaces.Services;
+using Budgetly.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,7 +19,7 @@ namespace Budgetly.Infrastructure.Services
             return Convert.ToBase64String(bytes);
         }
 
-        public string GenerateToken(Guid userId, User user)
+        public string GenerateToken(User user)
         {
             string? secretKey = configuration["Jwt:SecretKey"];
             string? issuer = configuration["Jwt:Issuer"];
@@ -44,6 +44,12 @@ namespace Budgetly.Infrastructure.Services
             };
 
             return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+        }
+
+        public string GenerateSalt(int size = 32)
+        {
+            byte[] salt = RandomNumberGenerator.GetBytes(size);
+            return Convert.ToBase64String(salt);
         }
     }
 }

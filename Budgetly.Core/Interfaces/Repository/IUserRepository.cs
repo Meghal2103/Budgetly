@@ -5,5 +5,7 @@ namespace Budgetly.Core.Interfaces.Repository
     public interface IUserRepository
     {
         Task<User?> GetByEmailAsync(string email);
+
+        Task<User> AddUserAsync(User user);
     }
 }

@@ -1,10 +1,11 @@
 using Budgetly.Core.Entities;
 
-namespace Budgetly.Core.Interfaces.Services
+namespace Budgetly.Application.Interfaces
 {
     public interface ISecurityServices
     {
         string HashPassword(string password, string salt);
-        string GenerateToken(Guid userId, User user);
+        string GenerateToken(User user);
+        string GenerateSalt(int size = 32);
     }
 }

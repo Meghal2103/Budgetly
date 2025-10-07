@@ -64,6 +64,8 @@ namespace Budgetly.API
                 });
             });
 
+            services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+
             return services;
         }
     }

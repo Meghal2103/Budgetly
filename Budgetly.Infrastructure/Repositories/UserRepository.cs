@@ -10,5 +10,12 @@ namespace Budgetly.Infrastructure.Repositories
         {
             return dbContext.Users.FirstOrDefaultAsync(u => u.Email == email); 
         }
+
+        public async Task<User> AddUserAsync(User user)
+        {
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            return user;
+        }
     }
 }
