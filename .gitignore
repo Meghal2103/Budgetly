@@ -50,8 +50,6 @@ Thumbs.db
 # .NET / Visual Studio  #
 #########################
 
-appsettings.json
-
 # Build results
 [Bb]in/
 [Oo]bj/
