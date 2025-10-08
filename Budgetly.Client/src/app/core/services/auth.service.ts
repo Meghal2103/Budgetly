@@ -69,7 +69,7 @@ export class AuthService {
                 if (token) {
                     this.decodeToken(token);
                 }
-                this.router.navigateByUrl('/');
+                this.router.navigateByUrl('/dashboard');
                 // this.toastr.success(response.message);
             },
             error: (errorResponse: HttpErrorResponse) => {
