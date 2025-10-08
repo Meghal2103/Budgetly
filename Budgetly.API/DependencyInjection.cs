@@ -68,7 +68,7 @@ namespace Budgetly.API
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowClentApp",
+                options.AddPolicy("AllowClientApp",
                     policy =>
                     {
                         policy.WithOrigins("http://localhost:4200")

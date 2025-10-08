@@ -8,6 +8,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
+import { LayoutModule } from './layout/layout.module';
 
 @NgModule({
     declarations: [
@@ -16,6 +17,7 @@ import { CoreModule } from './core/core.module';
     imports: [
         BrowserModule,
         AppRoutingModule,
+        LayoutModule,
         CoreModule,
         SharedModule,
         AuthModule

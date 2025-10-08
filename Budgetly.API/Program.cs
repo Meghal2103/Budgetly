@@ -15,7 +15,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowClentApp");
+app.UseCors("AllowClientApp");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
