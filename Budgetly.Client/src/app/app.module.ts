@@ -20,7 +20,7 @@ import { LayoutModule } from './layout/layout.module';
         LayoutModule,
         CoreModule,
         SharedModule,
-        AuthModule
+        AuthModule,
     ],
     providers: [
         {

@@ -11,7 +11,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
         DashboardComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
     ],
     exports: [
         PrimaryHeaderComponent,
