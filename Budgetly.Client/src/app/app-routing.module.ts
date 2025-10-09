@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './shared/components/dashboard/dashboard.component';
 import { loggedInGuard } from './core/guards/logged-in.guard';
 import { LayoutComponent } from './layout/layout.component';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 
 const routes: Routes = [
     {
@@ -14,6 +15,7 @@ const routes: Routes = [
             { path: 'transactions', loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsModule)}
         ]
     },
+    { path: '**', component: PageNotFoundComponent}
 ];
 
 @NgModule({

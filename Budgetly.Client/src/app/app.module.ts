@@ -16,11 +16,11 @@ import { LayoutModule } from './layout/layout.module';
     ],
     imports: [
         BrowserModule,
+        AuthModule,
         AppRoutingModule,
         LayoutModule,
         CoreModule,
-        SharedModule,
-        AuthModule,
+        SharedModule
     ],
     providers: [
         {
