@@ -11,27 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgetly.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgetly.Core", "Budgetly.Core\Budgetly.Core.csproj", "{B6A1AF5B-2F11-492F-B333-A1C02026035C}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MyApp.Client", "..\.NET Web API + Angular\Clean Architecture\MyApp.Client\", "{5966CEA1-D0D5-E37E-DF5F-BAA61C06334E}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_52652"
-		Debug.AspNetCompiler.PhysicalPath = "..\.NET Web API + Angular\Clean Architecture\MyApp.Client\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52652\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_52652"
-		Release.AspNetCompiler.PhysicalPath = "..\.NET Web API + Angular\Clean Architecture\MyApp.Client\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52652\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "52652"
-		SlnRelativePath = "..\.NET Web API + Angular\Clean Architecture\MyApp.Client\"
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,10 +33,6 @@ Global
 		{B6A1AF5B-2F11-492F-B333-A1C02026035C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6A1AF5B-2F11-492F-B333-A1C02026035C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6A1AF5B-2F11-492F-B333-A1C02026035C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5966CEA1-D0D5-E37E-DF5F-BAA61C06334E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5966CEA1-D0D5-E37E-DF5F-BAA61C06334E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5966CEA1-D0D5-E37E-DF5F-BAA61C06334E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{5966CEA1-D0D5-E37E-DF5F-BAA61C06334E}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
