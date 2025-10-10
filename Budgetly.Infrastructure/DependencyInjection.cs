@@ -12,7 +12,7 @@ namespace Budgetly.Infrastructure
     {
         public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionA")));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionD")));
             services.AddScoped<ISecurityServices, SecurityServices>();
             services.AddScoped<IUserRepository, UserRepository>();
 

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PrimaryHeaderComponent } from './components/primary-header/primary-header.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
 
 @NgModule({
     declarations: [
@@ -12,6 +14,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     ],
     imports: [
         CommonModule,
+        ButtonModule,
+        ToolbarModule
     ],
     exports: [
         PrimaryHeaderComponent,

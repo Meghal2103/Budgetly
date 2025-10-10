@@ -9,6 +9,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { LayoutModule } from './layout/layout.module';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { LayoutModule } from './layout/layout.module';
         AppRoutingModule,
         LayoutModule,
         CoreModule,
-        SharedModule
+        SharedModule,
+        ButtonModule
     ],
     providers: [
         {
