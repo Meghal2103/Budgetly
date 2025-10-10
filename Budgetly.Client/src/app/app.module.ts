@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { LayoutModule } from './layout/layout.module';
 import { ButtonModule } from 'primeng/button';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { ButtonModule } from 'primeng/button';
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule, 
         AuthModule,
         AppRoutingModule,
         LayoutModule,
