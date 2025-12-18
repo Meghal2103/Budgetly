@@ -13,16 +13,33 @@ export class LoginComponent {
         email: '',
         password: ''
     }
+    isLoading: boolean = false;
+    errorMessage: string = '';
     private authService: AuthService = inject(AuthService);
     @ViewChild('loginForm') loginForm!: NgForm;
 
     public onSubmit(form: NgForm): void {
-        this.authService.login(this.credential);
-        form.resetForm();
+        if (form.invalid) {
+            return;
+        }
+
+        this.isLoading = true;
+        this.errorMessage = '';
+
+        this.authService.login(this.credential).subscribe({
+            next: (message: string) => {
+                this.isLoading = false;
+                form.resetForm();
+            },
+            error: (error: Error) => {
+                this.isLoading = false;
+                this.errorMessage = error.message || 'An error occurred during login';
+            }
+        });
     }
 
     public canDeactivate(): boolean {
-        if (this.loginForm.touched && this.loginForm.dirty) {
+        if (this.loginForm && this.loginForm.touched && this.loginForm.dirty) {
             return confirm('Your details will be lost if you leave. Do you really want to leave?');
         }
         return true;

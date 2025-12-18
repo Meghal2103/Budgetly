@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SecondaryHeaderComponent } from './secondary-header/secondary-header.component';
 import { AnalysisComponent } from './analysis.component';
-
-
+import { AnalysisRoutingModule } from './analysis-routing.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +10,8 @@ import { AnalysisComponent } from './analysis.component';
     AnalysisComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    AnalysisRoutingModule
   ]
 })
 export class AnalysisModule { }

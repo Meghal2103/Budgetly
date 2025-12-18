@@ -12,9 +12,11 @@ const routes: Routes = [
         canActivate: [loggedInGuard],
         children: [
             { path: 'dashboard', component: DashboardComponent },
-            { path: 'transactions', loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsModule)}
+            { path: 'transactions', loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsModule)},
+            { path: 'analysis', loadChildren: () => import('./analysis/analysis.module').then(a => a.AnalysisModule )}
         ]
     },
+    { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
     { path: '**', component: PageNotFoundComponent}
 ];
 

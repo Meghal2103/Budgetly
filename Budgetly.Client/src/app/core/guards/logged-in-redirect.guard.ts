@@ -7,7 +7,7 @@ export const loggedInRedirectGuard: CanActivateFn = () => {
     const router: Router = inject(Router);
 
     if (authService.isLoggedIn) {
-        return router.createUrlTree(['/dc']);
+        return router.createUrlTree(['/dashboard']);
     }
     return true;
 };

@@ -5,11 +5,11 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link text-secondary" routerLink="/login" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Login</a>
+                    <a class="nav-link text-secondary" routerLink="/auth/login" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Login</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-secondary" routerLink="/registration" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Register</a>
+                    <a class="nav-link text-secondary" routerLink="/auth/sign-up" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Register</a>
                 </li>
 
                 <li class="nav-item ms-2" *ngIf="authService.isLoggedIn">

@@ -10,6 +10,7 @@ const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent, canActivate: [loggedInRedirectGuard] },
     { path: 'sign-up', component: SignUpComponent, canActivate: [loggedInRedirectGuard] },
+    { path: 'registration', redirectTo: 'sign-up', pathMatch: 'full' },
 ];
 
 @NgModule({

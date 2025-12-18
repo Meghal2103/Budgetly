@@ -9,7 +9,7 @@ import { TransactionRoutingModule } from './transactions-routing.module';
     ],
     imports: [
         CommonModule,
-        TransactionRoutingModule
+        TransactionRoutingModule,
     ],
     exports : [
         TransactionsComponent

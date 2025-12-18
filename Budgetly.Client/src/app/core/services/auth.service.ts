@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { JwtToken } from '../models/auth/jwt-token.model';
 import { jwtDecode } from 'jwt-decode';
 import { Login } from '../models/auth/login.model';
@@ -60,23 +61,25 @@ export class AuthService {
         return Date.now() >= expirationTime;
     }
 
-    public login(login: Login): void {
+    public login(login: Login): Observable<string> {
         const url = `${environment.baseUrl}/api/Auth/login`;
 
-        this.http.post<APIResponse<object>>(url, login).subscribe({
-            next: (response: APIResponse<object>) => {
+        return this.http.post<APIResponse<object>>(url, login).pipe(
+            map((response: APIResponse<object>) => {
                 const token: string | null = response.token;
                 if (token) {
                     this.decodeToken(token);
+                    this.router.navigateByUrl('/dashboard');
+                    return response.message || 'Login successful';
                 }
-                this.router.navigateByUrl('/dashboard');
-                // this.toastr.success(response.message);
-            },
-            error: (errorResponse: HttpErrorResponse) => {
+                throw new Error('No token received');
+            }),
+            catchError((errorResponse: HttpErrorResponse) => {
                 const apiError: APIResponse<string> = errorResponse.error;
-                // this.toastr.error(apiError.message);
-            }
-        })
+                const errorMessage = apiError?.message || 'An error occurred during login';
+                return throwError(() => new Error(errorMessage));
+            })
+        );
     }
 
     public logout(): void {
@@ -84,6 +87,6 @@ export class AuthService {
         this._isLoggedIn = false;
         this._email = '';
         this._name = '';
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/auth/login');
     }
 }

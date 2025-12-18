@@ -9,8 +9,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { LayoutModule } from './layout/layout.module';
-import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @NgModule({
     declarations: [
@@ -23,8 +23,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         AppRoutingModule,
         LayoutModule,
         CoreModule,
-        SharedModule,
-        ButtonModule
+        TransactionsModule,
+        SharedModule
     ],
     providers: [
         {
