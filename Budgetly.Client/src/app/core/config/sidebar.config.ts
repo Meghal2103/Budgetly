@@ -1,46 +1,48 @@
+import { AnalysisItems } from '../enums/analysis-items.enum';
 import { SidebarItem } from '../models/sidebar.model';
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
-    id: 0,
+    id: 'Dashboard',
     label: 'Dashboard',
     icon: 'bi-speedometer2',
     route: '/dashboard'
   },
   {
-    id: 1,
-    label: 'Add Expenditure',
-    icon: 'bi-plus-circle',
+    id: 'View Transactions',
+    label: 'View Transaction',
+    icon: 'bi-search',
     route: '/transactions'
   },
   {
-    id: 2,
+    id: AnalysisItems.Weekly,
     label: 'Weekly Expenditure',
     icon: 'bi-calendar-week',
     route: '/analysis'
   },
   {
-    id: 3,
+    id: AnalysisItems.Monthly,
     label: 'Monthly Expenditure',
     icon: 'bi-calendar-month',
     route: '/analysis'
   },
   {
-    id: 4,
+    id: AnalysisItems.Yearly,
     label: 'Yearly Expenditure',
     icon: 'bi-calendar3',
     route: '/analysis'
   },
   {
-    id: 5,
+    id: AnalysisItems.Custom_Range,
     label: 'Custom Range Expenditure',
     icon: 'bi-calendar-range',
     route: '/analysis'
   },
-  {
-    id: 6,
-    label: 'Search Transaction',
-    icon: 'bi-search',
-    route: '/transactions'
-  }
 ];
+
+  // {
+  //   id: 'Add Expenditure',
+  //   label: 'Add Expenditure',
+  //   icon: 'bi-plus-circle',
+  //   route: '/transactions/add-transaction'
+  // },

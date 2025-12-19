@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class SidebarService {
   public readonly sidebarItems: SidebarItem[] = SIDEBAR_ITEMS;
   private router: Router = inject(Router);
-  private _activeItem: number = this.sidebarItems[0].id;
+  private _activeItem: string = this.sidebarItems[0].id;
 
   public get activeItem(){
     return this._activeItem;

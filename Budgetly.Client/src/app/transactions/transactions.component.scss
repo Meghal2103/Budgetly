@@ -1,0 +1,81 @@
+.transactions-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-section {
+    h2 {
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .btn {
+        white-space: nowrap;
+    }
+}
+
+.filters-section {
+    .card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 0.875rem;
+    }
+}
+
+.transactions-table-section {
+    .card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .card-header {
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 1.5rem;
+
+            h5 {
+                color: #1f2937;
+                font-weight: 600;
+                font-size: 1.1rem;
+            }
+        }
+    }
+
+    .table {
+        th {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        td {
+            color: #6b7280;
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.65rem;
+        }
+    }
+}
+

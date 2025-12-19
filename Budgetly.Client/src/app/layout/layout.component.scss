@@ -1,1 +1,18 @@
+.layout-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
 
+.sidebar-container {
+    flex-shrink: 0;
+    width: 280px;
+    overflow-y: visible;
+}
+
+.content-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f5f7fa;
+}

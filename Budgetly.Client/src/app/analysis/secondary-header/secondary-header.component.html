@@ -1,1 +1,48 @@
-<p>secondary-header works!</p>
+<div class="secondary-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <!-- Left Side: Dropdowns -->
+            <div class="col-md-6">
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="filter-group">
+                        <label class="form-label mb-1 small text-muted">Category</label>
+                        <p-dropdown 
+                            [options]="categories" 
+                            [(ngModel)]="selectedCategory"
+                            placeholder="Select Category"
+                            [style]="{'width': '100%', 'min-width': '200px'}"
+                            class="w-100">
+                        </p-dropdown>
+                    </div>
+                    <div class="filter-group">
+                        <label class="form-label mb-1 small text-muted">Payment Type</label>
+                        <p-dropdown 
+                            [options]="paymentTypes" 
+                            [(ngModel)]="selectedPaymentType"
+                            placeholder="Select Payment Type"
+                            [style]="{'width': '100%', 'min-width': '200px'}"
+                            class="w-100">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Date Range -->
+            <div class="col-md-6 d-flex justify-content-end">
+                <div class="filter-group">
+                    <label class="form-label mb-1 small text-muted">Date Range</label>
+                    <p-calendar 
+                        [(ngModel)]="dateRange"
+                        selectionMode="range"
+                        [readonlyInput]="true"
+                        [showIcon]="true"
+                        placeholder="Select Date Range"
+                        dateFormat="dd/mm/yy"
+                        [style]="{'width': '100%', 'min-width': '300px'}"
+                        class="w-100">
+                    </p-calendar>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
