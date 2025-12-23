@@ -12,22 +12,30 @@
     <div class="form-section">
         <div class="card">
             <div class="card-body">
+                <!-- Error Message -->
+                <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+                </div>
+
                 <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
                     <div class="row g-3">
-                        <!-- Description -->
-                        <div class="col-md-6">
-                            <label for="description" class="form-label">
-                                Description <span class="text-danger">*</span>
+                        <!-- Title -->
+                        <div class="col-md-12">
+                            <label for="title" class="form-label">
+                                Title <span class="text-danger">*</span>
                             </label>
                             <input
                                 type="text"
-                                id="description"
+                                id="title"
                                 class="form-control"
-                                [class.is-invalid]="isFieldInvalid('description')"
-                                formControlName="description"
-                                placeholder="Enter transaction description">
-                            <div class="invalid-feedback" *ngIf="isFieldInvalid('description')">
-                                {{ getFieldError('description') }}
+                                [class.is-invalid]="isFieldInvalid('title')"
+                                formControlName="title"
+                                placeholder="Enter transaction title"
+                                [disabled]="isLoading">
+                            <div class="invalid-feedback" *ngIf="isFieldInvalid('title')">
+                                {{ getFieldError('title') }}
                             </div>
                         </div>
 
@@ -46,7 +54,8 @@
                                     formControlName="amount"
                                     placeholder="0.00"
                                     step="0.01"
-                                    min="0.01">
+                                    min="0.01"
+                                    [disabled]="isLoading">
                                 <div class="invalid-feedback" *ngIf="isFieldInvalid('amount')">
                                     {{ getFieldError('amount') }}
                                 </div>
@@ -55,46 +64,48 @@
 
                         <!-- Category -->
                         <div class="col-md-6">
-                            <label for="category" class="form-label">
+                            <label for="categoryId" class="form-label">
                                 Category <span class="text-danger">*</span>
                             </label>
                             <select
-                                id="category"
+                                id="categoryId"
                                 class="form-select"
-                                [class.is-invalid]="isFieldInvalid('category')"
-                                formControlName="category">
+                                [class.is-invalid]="isFieldInvalid('categoryId')"
+                                formControlName="categoryId"
+                                [disabled]="isLoading">
                                 <option value="">Select a category</option>
-                                <option *ngFor="let category of categories" [value]="category">
-                                    {{ category }}
+                                <option *ngFor="let category of categories" [value]="category.id">
+                                    {{ category.name }}
                                 </option>
                             </select>
-                            <div class="invalid-feedback" *ngIf="isFieldInvalid('category')">
-                                {{ getFieldError('category') }}
+                            <div class="invalid-feedback" *ngIf="isFieldInvalid('categoryId')">
+                                {{ getFieldError('categoryId') }}
                             </div>
                         </div>
 
-                        <!-- Payment Mode -->
+                        <!-- Transaction Type -->
                         <div class="col-md-6">
-                            <label for="paymentMode" class="form-label">
-                                Payment Mode <span class="text-danger">*</span>
+                            <label for="transactionTypeID" class="form-label">
+                                Transaction Type <span class="text-danger">*</span>
                             </label>
                             <select
-                                id="paymentMode"
+                                id="transactionTypeID"
                                 class="form-select"
-                                [class.is-invalid]="isFieldInvalid('paymentMode')"
-                                formControlName="paymentMode">
-                                <option value="">Select payment mode</option>
-                                <option *ngFor="let mode of paymentModes" [value]="mode">
-                                    {{ mode }}
+                                [class.is-invalid]="isFieldInvalid('transactionTypeID')"
+                                formControlName="transactionTypeID"
+                                [disabled]="isLoading">
+                                <option value="">Select transaction type</option>
+                                <option *ngFor="let type of transactionTypes" [value]="type.id">
+                                    {{ type.name }}
                                 </option>
                             </select>
-                            <div class="invalid-feedback" *ngIf="isFieldInvalid('paymentMode')">
-                                {{ getFieldError('paymentMode') }}
+                            <div class="invalid-feedback" *ngIf="isFieldInvalid('transactionTypeID')">
+                                {{ getFieldError('transactionTypeID') }}
                             </div>
                         </div>
 
                         <!-- Date -->
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="date" class="form-label">
                                 Date <span class="text-danger">*</span>
                             </label>
@@ -103,9 +114,27 @@
                                 id="date"
                                 class="form-control"
                                 [class.is-invalid]="isFieldInvalid('date')"
-                                formControlName="date">
+                                formControlName="date"
+                                [disabled]="isLoading">
                             <div class="invalid-feedback" *ngIf="isFieldInvalid('date')">
                                 {{ getFieldError('date') }}
+                            </div>
+                        </div>
+
+                        <!-- Time -->
+                        <div class="col-md-3">
+                            <label for="time" class="form-label">
+                                Time <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                type="time"
+                                id="time"
+                                class="form-control"
+                                [class.is-invalid]="isFieldInvalid('time')"
+                                formControlName="time"
+                                [disabled]="isLoading">
+                            <div class="invalid-feedback" *ngIf="isFieldInvalid('time')">
+                                {{ getFieldError('time') }}
                             </div>
                         </div>
 
@@ -117,17 +146,20 @@
                                 class="form-control"
                                 formControlName="notes"
                                 rows="3"
-                                placeholder="Add any additional notes about this transaction"></textarea>
+                                placeholder="Add any additional notes about this transaction"
+                                [disabled]="isLoading"></textarea>
                         </div>
                     </div>
 
                     <!-- Form Actions -->
                     <div class="form-actions mt-4 pt-3 border-top">
-                        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
+                        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isLoading">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid">
-                            <i class="bi bi-check-circle me-2"></i>Add Transaction
+                        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
+                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                            {{ isLoading ? 'Adding...' : 'Add Transaction' }}
                         </button>
                     </div>
                 </form>

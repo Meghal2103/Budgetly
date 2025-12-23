@@ -15,6 +15,7 @@ export class AuthService {
     private _isLoggedIn: boolean = false;
     private _email: string = '';
     private _name: string = '';
+    private _userId: number = 0;
 
     get isLoggedIn(): boolean {
         return this._isLoggedIn;
@@ -26,6 +27,10 @@ export class AuthService {
 
     get name(): string {
         return this._name;
+    }
+
+    get userId(): number {
+        return this._userId;
     }
 
     private http: HttpClient = inject(HttpClient);
@@ -49,6 +54,9 @@ export class AuthService {
         this._isLoggedIn = true;
         this._email = jwtPayload.email;
         this._name = jwtPayload.name;
+        // Get userId from nameid or sub claim (ClaimTypes.NameIdentifier)
+        const userIdStr = jwtPayload.nameid || jwtPayload.sub || '';
+        this._userId = userIdStr ? parseInt(userIdStr, 10) : 0;
         localStorage.setItem('authToken', token);
     }
 
@@ -87,6 +95,7 @@ export class AuthService {
         this._isLoggedIn = false;
         this._email = '';
         this._name = '';
+        this._userId = 0;
         this.router.navigateByUrl('/auth/login');
     }
 }

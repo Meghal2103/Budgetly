@@ -1,28 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Budgetly.Core.Entities
+namespace Budgetly.Core.DTOs.Transaction
 {
-    public class Transaction
+    public class AddEditTransaction
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int TransactionId { get; set; }
-
-        [Required]
-        public string Title { get; set; }
-
         [Required]
         public int UserId { get; set; }
-        public required User User { get; set; }
 
         [Required]
         public int CategoryId { get; set; }
-        public required Category Category { get; set; }
 
         [Required]
         public int TransactionTypeID { get; set; }
-        public required TransactionType TransactionType { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

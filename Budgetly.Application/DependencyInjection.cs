@@ -1,8 +1,8 @@
 using Budgetly.Application.Interfaces;
-using Budgetly.Application.Services;
 using Budgetly.Application.Mapping;
-using AutoMapper;
+using Budgetly.Application.Services;
 using Budgetly.Core;
+using Budgetly.Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +13,7 @@ namespace Budgetly.Application
         public static IServiceCollection AddApplicationDI(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<ApplicationMapper>();

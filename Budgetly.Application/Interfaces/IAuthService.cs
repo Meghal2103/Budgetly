@@ -1,5 +1,5 @@
 using Budgetly.Application.DTOs.Auth;
-using Budgetly.Application.DTOs.User;
+using Budgetly.Core.DTOs.User;
 
 namespace Budgetly.Application.Interfaces
 {

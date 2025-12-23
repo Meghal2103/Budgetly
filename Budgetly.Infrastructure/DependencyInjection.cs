@@ -15,6 +15,7 @@ namespace Budgetly.Infrastructure
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionD")));
             services.AddScoped<ISecurityServices, SecurityServices>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             return services;
         }

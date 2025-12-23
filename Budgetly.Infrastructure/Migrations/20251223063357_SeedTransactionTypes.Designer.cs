@@ -4,6 +4,7 @@ using Budgetly.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Budgetly.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251223063357_SeedTransactionTypes")]
+    partial class SeedTransactionTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,54 +43,7 @@ namespace Budgetly.Infrastructure.Migrations
                     b.HasIndex("CategoryName")
                         .IsUnique();
 
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CategoryName = "Food"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CategoryName = "Fuel"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CategoryName = "Hygiene"
-                        },
-                        new
-                        {
-                            CategoryId = 4,
-                            CategoryName = "Fitness"
-                        },
-                        new
-                        {
-                            CategoryId = 5,
-                            CategoryName = "Housing"
-                        },
-                        new
-                        {
-                            CategoryId = 6,
-                            CategoryName = "Utilities"
-                        },
-                        new
-                        {
-                            CategoryId = 7,
-                            CategoryName = "Entertainment"
-                        },
-                        new
-                        {
-                            CategoryId = 8,
-                            CategoryName = "Healthcare"
-                        },
-                        new
-                        {
-                            CategoryId = 9,
-                            CategoryName = "Education"
-                        });
+                    b.ToTable("Categorys");
                 });
 
             modelBuilder.Entity("Budgetly.Core.Entities.Transaction", b =>
@@ -111,10 +67,6 @@ namespace Budgetly.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TransactionTypeID")
                         .HasColumnType("int");

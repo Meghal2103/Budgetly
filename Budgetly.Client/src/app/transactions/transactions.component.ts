@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TransactionService } from '../core/services/transaction.service';
+import { InitialDataService } from '../core/services/initial-data.service';
+import { TransactionDTO } from '../core/models/transaction/transaction.model';
 
 interface Transaction {
     id: number;
-    description: string;
+    title: string;
     amount: number;
     category: string;
-    paymentMode: string;
+    transactionType: string;
     date: Date;
     notes?: string;
 }
@@ -22,94 +25,96 @@ export class TransactionsComponent implements OnInit {
   // Transaction data
   allTransactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
+  isLoading: boolean = false;
+  errorMessage: string = '';
   
-  // Filter options
-  categories: string[] = ['All Categories', 'Food & Dining', 'Transportation', 'Shopping', 'Bills & Utilities', 'Entertainment', 'Healthcare', 'Education', 'Travel'];
-  paymentModes: string[] = ['All Payment Types', 'Credit Card', 'Debit Card', 'Cash', 'UPI', 'Bank Transfer'];
+  // Filter options (UI only - not implemented)
+  categories: string[] = ['All Categories'];
+  paymentModes: string[] = ['All Payment Types'];
   
-  // Filter values
+  // Filter values (UI only - not implemented)
   selectedCategory: string = 'All Categories';
   selectedPaymentMode: string = 'All Payment Types';
   selectedDate: Date | null = null;
   searchText: string = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private transactionService: TransactionService,
+    private initialDataService: InitialDataService
+  ) {
     const nav = this.router.getCurrentNavigation();
     const state = nav?.extras?.state as { analysisTypeId?: number } | undefined;
     this.analysisTypeId = state?.analysisTypeId ?? null;
   }
 
   ngOnInit(): void {
-    this.generateDummyTransactions();
-    this.applyFilters();
+    this.loadTransactions();
+    this.loadFilterOptions();
   }
 
-  private generateDummyTransactions(): void {
-    const categories = ['Food & Dining', 'Transportation', 'Shopping', 'Bills & Utilities', 'Entertainment', 'Healthcare', 'Education', 'Travel'];
-    const paymentModes = ['Credit Card', 'Debit Card', 'Cash', 'UPI', 'Bank Transfer'];
-    const descriptions = [
-      'Restaurant Bill', 'Grocery Shopping', 'Coffee Shop', 'Fast Food', 'Food Delivery',
-      'Uber Ride', 'Gas Station', 'Public Transport', 'Parking Fee', 'Car Maintenance',
-      'Clothing Store', 'Electronics', 'Online Purchase', 'Department Store', 'Book Store',
-      'Electricity Bill', 'Water Bill', 'Internet Bill', 'Phone Bill', 'Gas Bill',
-      'Movie Ticket', 'Concert', 'Streaming Service', 'Gaming', 'Theater',
-      'Pharmacy', 'Doctor Visit', 'Lab Test', 'Medicine', 'Health Insurance',
-      'Course Fee', 'Books', 'Tuition', 'Online Course', 'School Supplies',
-      'Hotel Booking', 'Flight Ticket', 'Train Ticket', 'Travel Insurance', 'Tour Package'
-    ];
+  private loadTransactions(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    // Generate 50 dummy transactions
-    for (let i = 0; i < 50; i++) {
-      const daysAgo = Math.floor(Math.random() * 90); // Last 90 days
-      const date = new Date();
-      date.setDate(date.getDate() - daysAgo);
-      
-      this.allTransactions.push({
-        id: i + 1,
-        description: descriptions[Math.floor(Math.random() * descriptions.length)],
-        amount: Math.floor(Math.random() * 10000) + 100,
-        category: categories[Math.floor(Math.random() * categories.length)],
-        paymentMode: paymentModes[Math.floor(Math.random() * paymentModes.length)],
-        date: date,
-        notes: Math.random() > 0.7 ? 'Additional notes here' : undefined
-      });
+    this.transactionService.getTransactions().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.allTransactions = this.mapTransactions(response.data);
+          this.filteredTransactions = [...this.allTransactions];
+          // Sort by date (most recent first)
+          this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+        } else {
+          this.errorMessage = response.message || 'Failed to load transactions';
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'An error occurred while loading transactions';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
+    const categories = this.initialDataService.getCategories();
+    const transactionTypes = this.initialDataService.getTransactionTypes();
+
+    return transactions.map(t => {
+      const category = categories.find(c => c.id === t.categoryId);
+      const transactionType = transactionTypes.find(tt => tt.id === t.transactionTypeID);
+
+      return {
+        id: t.transactionId,
+        title: (t as any).title || 'Untitled Transaction',
+        amount: t.amount,
+        category: category?.name || 'Unknown',
+        transactionType: transactionType?.name || 'Unknown',
+        date: new Date(t.dateTime),
+        notes: t.notes || undefined
+      };
+    });
+  }
+
+  private loadFilterOptions(): void {
+    // Load categories and transaction types for filter dropdowns (UI only)
+    const categories = this.initialDataService.getCategories();
+    const transactionTypes = this.initialDataService.getTransactionTypes();
+
+    if (categories.length > 0) {
+      this.categories = ['All Categories', ...categories.map(c => c.name)];
     }
 
-    // Sort by date (most recent first)
-    this.allTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+    if (transactionTypes.length > 0) {
+      this.paymentModes = ['All Payment Types', ...transactionTypes.map(t => t.name)];
+    }
   }
 
   applyFilters(): void {
-    this.filteredTransactions = this.allTransactions.filter(transaction => {
-      // Category filter
-      if (this.selectedCategory !== 'All Categories' && transaction.category !== this.selectedCategory) {
-        return false;
-      }
-
-      // Payment mode filter
-      if (this.selectedPaymentMode !== 'All Payment Types' && transaction.paymentMode !== this.selectedPaymentMode) {
-        return false;
-      }
-
-      // Date filter
-      if (this.selectedDate) {
-        const transactionDate = new Date(transaction.date);
-        const filterDate = new Date(this.selectedDate);
-        if (transactionDate.toDateString() !== filterDate.toDateString()) {
-          return false;
-        }
-      }
-
-      // Search text filter
-      if (this.searchText) {
-        const searchLower = this.searchText.toLowerCase();
-        return transaction.description.toLowerCase().includes(searchLower) ||
-               transaction.category.toLowerCase().includes(searchLower) ||
-               transaction.paymentMode.toLowerCase().includes(searchLower);
-      }
-
-      return true;
-    });
+    // Filter logic is kept but not implemented - just show all transactions
+    // UI components are kept for future implementation
+    this.filteredTransactions = [...this.allTransactions];
+    this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   onCategoryChange(): void {

@@ -1,7 +1,8 @@
 using Budgetly.Application.DTOs.Auth;
 using Budgetly.Core.Entities;
 using AutoMapper;
-using Budgetly.Application.DTOs.User;
+using Budgetly.Core.DTOs.User;
+using Budgetly.Core.DTOs.Transaction;
 
 namespace Budgetly.Application.Mapping
 {
@@ -11,6 +12,8 @@ namespace Budgetly.Application.Mapping
         {
             CreateMap<UserRegistration, User>();
             CreateMap<User, UserDTO>();
+            CreateMap<AddEditTransaction, Transaction>();
+            CreateMap<Transaction, TransactionDTO>();
         }
     }
 }

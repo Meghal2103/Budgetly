@@ -1,7 +1,7 @@
 using Budgetly.API.Models;
 using Budgetly.Application.DTOs.Auth;
-using Budgetly.Application.DTOs.User;
 using Budgetly.Application.Interfaces;
+using Budgetly.Core.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Budgetly.API.Controllers
@@ -13,7 +13,7 @@ namespace Budgetly.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            APIResponse<object> response = new APIResponse<object>();
+            APIResponse<object> response = new();
 
             if (!ModelState.IsValid)
             {
@@ -40,7 +40,7 @@ namespace Budgetly.API.Controllers
         [HttpPost("sign-up")]
         public async Task<IActionResult> Register([FromBody] UserRegistration userRegistration)
         {
-            APIResponse<UserDTO> response = new APIResponse<UserDTO>();
+            APIResponse<UserDTO> response = new();
 
             if (!ModelState.IsValid)
             {

@@ -6,9 +6,9 @@ namespace Budgetly.Infrastructure.Repositories
 {
     internal class UserRepository(AppDbContext dbContext) : IUserRepository
     {
-        public Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return dbContext.Users.FirstOrDefaultAsync(u => u.Email == email); 
+            return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email); 
         }
 
         public async Task<User> AddUserAsync(User user)

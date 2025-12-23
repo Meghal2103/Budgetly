@@ -1,4 +1,4 @@
-namespace Budgetly.Application.DTOs.User
+namespace Budgetly.Core.DTOs.User
 {
     public class UserDTO
     {
