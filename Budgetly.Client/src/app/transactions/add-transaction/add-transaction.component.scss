@@ -79,5 +79,62 @@
             min-width: 120px;
         }
     }
+
+    .transaction-type-buttons {
+        display: flex;
+        gap: 0;
+        background-color: #f9fafb;
+        padding: 0.25rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        width: fit-content;
+
+        .transaction-type-btn {
+            padding: 0.625rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+
+            &:hover:not(:disabled) {
+                background-color: #f3f4f6;
+                color: #374151;
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            &.active {
+                background-color: #dbeafe;
+                font-weight: 600;
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            }
+
+            &.cash-out-btn.active {
+                color: #dc3545;
+            }
+
+            &.cash-in-btn.active {
+                color: #198754;
+            }
+        }
+    }
+
+    .form-control.text-danger {
+        color: #dc3545 !important;
+        font-weight: 600;
+    }
+
+    .form-control.text-success {
+        color: #198754 !important;
+        font-weight: 600;
+    }
 }
 

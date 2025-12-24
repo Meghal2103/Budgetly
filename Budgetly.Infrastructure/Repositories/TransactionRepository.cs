@@ -13,6 +13,8 @@ namespace Budgetly.Infrastructure.Repositories
 
         public async Task<Transaction> AddTransactionAsync(Transaction transaction)
         {
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == transaction.UserId);
+            user.Balance += transaction.Amount;
             await dbContext.Transactions.AddAsync(transaction);
             await dbContext.SaveChangesAsync();
             return transaction;

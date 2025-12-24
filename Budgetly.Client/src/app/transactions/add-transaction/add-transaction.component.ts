@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TransactionService } from '../../core/services/transaction.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -19,6 +19,7 @@ export class AddTransactionComponent implements OnInit {
 
   categories: CategoryOption[] = [];
   transactionTypes: TransactionType[] = [];
+  selectedTransactionType: 'cashOut' | 'cashIn' = 'cashIn';
 
   constructor(
     private fb: FormBuilder,
@@ -77,12 +78,26 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
-      amount: ['', [Validators.required, Validators.min(0.01)]],
+      amount: ['', [Validators.required, (control: any) => this.amountValidator(control)]],
       categoryId: ['', Validators.required],
       transactionTypeID: ['', Validators.required],
       date: [formattedDate, Validators.required],
       time: [formattedTime, Validators.required],
       notes: ['']
+    });
+
+    // Listen to amount changes to detect manual minus sign
+    this.transactionForm.get('amount')?.valueChanges.subscribe(value => {
+      if (value && typeof value === 'string' && value !== '') {
+        const hasMinus = value.startsWith('-');
+        if (hasMinus && this.selectedTransactionType === 'cashIn') {
+          // User manually added minus sign, switch to Cash Out
+          this.selectedTransactionType = 'cashOut';
+        } else if (!hasMinus && this.selectedTransactionType === 'cashOut') {
+          // User manually removed minus sign, switch to Cash In
+          this.selectedTransactionType = 'cashIn';
+        }
+      }
     });
   }
 
@@ -147,6 +162,9 @@ export class AddTransactionComponent implements OnInit {
     if (field?.hasError('min') && field.touched) {
       return 'Amount must be greater than 0';
     }
+    if (field?.hasError('invalidAmount') && field.touched) {
+      return 'Please enter a valid amount';
+    }
     if (field?.hasError('maxlength') && field.touched) {
       return 'Description is too long';
     }
@@ -169,5 +187,44 @@ export class AddTransactionComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.transactionForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
+  }
+
+  onTransactionTypeSelect(type: 'cashOut' | 'cashIn'): void {
+    this.selectedTransactionType = type;
+    const amountControl = this.transactionForm.get('amount');
+    if (amountControl && amountControl.value) {
+      let currentValue = amountControl.value.toString();
+      
+      if (type === 'cashOut') {
+        // Add minus sign if not present
+        if (!currentValue.startsWith('-')) {
+          amountControl.setValue('-' + currentValue, { emitEvent: false });
+        }
+      } else {
+        // Remove minus sign if present
+        if (currentValue.startsWith('-')) {
+          amountControl.setValue(currentValue.substring(1), { emitEvent: false });
+        }
+      }
+    }
+  }
+
+  getAmountColorClass(): string {
+    return this.selectedTransactionType === 'cashOut' ? 'text-danger' : 'text-success';
+  }
+
+  private amountValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+    const value = parseFloat(control.value);
+    if (isNaN(value)) {
+      return { invalidAmount: true };
+    }
+    const absValue = Math.abs(value);
+    if (absValue < 0.01) {
+      return { min: true };
+    }
+    return null;
   }
 }

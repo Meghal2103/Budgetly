@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Budgetly.Core.DTOs.Transaction
+namespace Budgetly.Core.ViewModel
 {
-    public class TransactionDTO
+    public class TransactionViewModel
     {
         public int TransactionId { get; set; }
 
@@ -20,6 +20,6 @@ namespace Budgetly.Core.DTOs.Transaction
         public decimal Amount { get; set; }
 
         [StringLength(1024)]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 }

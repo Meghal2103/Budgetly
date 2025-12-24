@@ -2,6 +2,7 @@ using Budgetly.API.Models;
 using Budgetly.Core.DTOs.Transaction;
 using Budgetly.Core.Entities;
 using Budgetly.Core.Interfaces.Services;
+using Budgetly.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace Budgetly.API.Controllers
         [HttpPost("add-transaction")]
         public async Task<IActionResult> AddTransaction([FromBody] AddEditTransaction addEditTransaction)
         {
-            APIResponse<TransactionDTO> response = new();
+            APIResponse<TransactionViewModel> response = new();
 
             if (!ModelState.IsValid)
             {
@@ -36,7 +37,7 @@ namespace Budgetly.API.Controllers
         [HttpGet("get-transactions")]
         public async Task<IActionResult> GetTransactions()
         {
-            APIResponse<List<TransactionDTO>> response = new();
+            APIResponse<List<TransactionViewModel>> response = new();
 
             var transactions = await transactionService.GetTransactions();
             response.Success = true;
