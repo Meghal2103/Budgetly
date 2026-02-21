@@ -1,216 +1,181 @@
 <div class="add-transaction-container">
-  <!-- Header Section -->
-  <div class="header-section mb-4">
-    <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onCancel()">
-      <i class="bi bi-arrow-left me-2"></i>Back to Transactions
-    </button>
-    <h2 class="mb-2">Add New Transaction</h2>
-    <p class="text-muted mb-0">Record a new expenditure transaction</p>
-  </div>
+    <!-- Header Section -->
+    <div class="header-section mb-4">
+        <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onCancel()">
+            <i class="bi bi-arrow-left me-2"></i>Back to Transactions
+        </button>
+        <h2 class="mb-2">Add New Transaction</h2>
+        <p class="text-muted mb-0">Record a new expenditure transaction</p>
+    </div>
 
-  <!-- Form Section -->
-  <div class="form-section">
-    <div class="card">
-      <div class="card-body">
-        <!-- Error Message -->
-        @if (errorMessage) {
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            {{ errorMessage }}
-            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
-          </div>
-        }
-
-        <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-          <div class="row g-3">
-            <!-- Title -->
-            <div class="col-md-12">
-              <label for="title" class="form-label">
-                Title <span class="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="title"
-                class="form-control"
-                [class.is-invalid]="isFieldInvalid('title')"
-                formControlName="title"
-                placeholder="Enter transaction title"
-                [disabled]="isLoading">
-                @if (isFieldInvalid('title')) {
-                  <div class="invalid-feedback">
-                    {{ getFieldError('title') }}
-                  </div>
+    <!-- Form Section -->
+    <div class="form-section">
+        <div class="card">
+            <div class="card-body">
+                <!-- Error Message -->
+                @if (errorMessage) {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+                </div>
                 }
-              </div>
 
-              <!-- Transaction Type Selection (Cash Out / Cash In) -->
-              <div class="col-md-12 mb-3">
-                <label class="form-label">
-                  Transaction Type <span class="text-danger">*</span>
-                </label>
-                <div class="transaction-type-buttons">
-                  <button
-                    type="button"
-                    class="transaction-type-btn cash-out-btn"
-                    [class.active]="selectedTransactionType === 'cashOut'"
-                    (click)="onTransactionTypeSelect('cashOut')"
-                    [disabled]="isLoading">
-                    Cash Out
-                  </button>
-                  <button
-                    type="button"
-                    class="transaction-type-btn cash-in-btn"
-                    [class.active]="selectedTransactionType === 'cashIn'"
-                    (click)="onTransactionTypeSelect('cashIn')"
-                    [disabled]="isLoading">
-                    Cash In
-                  </button>
-                </div>
-              </div>
-
-              <!-- Amount -->
-              <div class="col-md-6">
-                <label for="amount" class="form-label">
-                  Amount <span class="text-danger">*</span>
-                </label>
-                <div class="input-group">
-                  <span class="input-group-text">₹</span>
-                  <input
-                    type="number"
-                    id="amount"
-                    class="form-control"
-                    [class.is-invalid]="isFieldInvalid('amount')"
-                    [ngClass]="getAmountColorClass()"
-                    formControlName="amount"
-                    placeholder="0.00"
-                    step="0.01"
-                    [disabled]="isLoading">
-                    @if (isFieldInvalid('amount')) {
-                      <div class="invalid-feedback">
-                        {{ getFieldError('amount') }}
-                      </div>
-                    }
-                  </div>
-                </div>
-
-                <!-- Category -->
-                <div class="col-md-6">
-                  <label for="categoryId" class="form-label">
-                    Category <span class="text-danger">*</span>
-                  </label>
-                  <select
-                    id="categoryId"
-                    class="form-select"
-                    [class.is-invalid]="isFieldInvalid('categoryId')"
-                    formControlName="categoryId"
-                    [disabled]="isLoading">
-                    <option value="">Select a category</option>
-                    @for (category of categories; track category) {
-                      <option [value]="category.id">
-                        {{ category.name }}
-                      </option>
-                    }
-                  </select>
-                  @if (isFieldInvalid('categoryId')) {
-                    <div class="invalid-feedback">
-                      {{ getFieldError('categoryId') }}
-                    </div>
-                  }
-                </div>
-
-                <!-- Transaction Type -->
-                <div class="col-md-6">
-                  <label for="transactionTypeID" class="form-label">
-                    Transaction Type <span class="text-danger">*</span>
-                  </label>
-                  <select
-                    id="transactionTypeID"
-                    class="form-select"
-                    [class.is-invalid]="isFieldInvalid('transactionTypeID')"
-                    formControlName="transactionTypeID"
-                    [disabled]="isLoading">
-                    <option value="">Select transaction type</option>
-                    @for (type of transactionTypes; track type) {
-                      <option [value]="type.id">
-                        {{ type.name }}
-                      </option>
-                    }
-                  </select>
-                  @if (isFieldInvalid('transactionTypeID')) {
-                    <div class="invalid-feedback">
-                      {{ getFieldError('transactionTypeID') }}
-                    </div>
-                  }
-                </div>
-
-                <!-- Date -->
-                <div class="col-md-3">
-                  <label for="date" class="form-label">
-                    Date <span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    id="date"
-                    class="form-control"
-                    [class.is-invalid]="isFieldInvalid('date')"
-                    formControlName="date"
-                    [disabled]="isLoading">
-                    @if (isFieldInvalid('date')) {
-                      <div class="invalid-feedback">
-                        {{ getFieldError('date') }}
-                      </div>
-                    }
-                  </div>
-
-                  <!-- Time -->
-                  <div class="col-md-3">
-                    <label for="time" class="form-label">
-                      Time <span class="text-danger">*</span>
-                    </label>
-                    <input
-                      type="time"
-                      id="time"
-                      class="form-control"
-                      [class.is-invalid]="isFieldInvalid('time')"
-                      formControlName="time"
-                      [disabled]="isLoading">
-                      @if (isFieldInvalid('time')) {
-                        <div class="invalid-feedback">
-                          {{ getFieldError('time') }}
+                <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+                    <div class="row g-3">
+                        <!-- Title -->
+                        <div class="col-md-12">
+                            <label for="title" class="form-label">
+                                Title <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="title" class="form-control"
+                                [class.is-invalid]="isFieldInvalid('title')" formControlName="title"
+                                placeholder="Enter transaction title" [disabled]="isLoading">
+                            @if (isFieldInvalid('title')) {
+                            <div class="invalid-feedback">
+                                {{ getFieldError('title') }}
+                            </div>
+                            }
                         </div>
-                      }
+
+                        <!-- Transaction Type Selection (Cash Out / Cash In) -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                Transaction Type <span class="text-danger">*</span>
+                            </label>
+                            <div class="transaction-type-buttons">
+                                <button type="button" class="transaction-type-btn cash-out-btn"
+                                    [class.active]="selectedTransactionType === 'cashOut'"
+                                    (click)="onTransactionTypeSelect('cashOut')" [disabled]="isLoading">
+                                    Cash Out
+                                </button>
+                                <button type="button" class="transaction-type-btn cash-in-btn"
+                                    [class.active]="selectedTransactionType === 'cashIn'"
+                                    (click)="onTransactionTypeSelect('cashIn')" [disabled]="isLoading">
+                                    Cash In
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-md-6">
+                            <label for="amount" class="form-label">
+                                Amount <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" id="amount" class="form-control"
+                                    [class.is-invalid]="isFieldInvalid('amount')" [ngClass]="getAmountColorClass()"
+                                    formControlName="amount" placeholder="0.00" step="0.01" [disabled]="isLoading">
+                                @if (isFieldInvalid('amount')) {
+                                <div class="invalid-feedback">
+                                    {{ getFieldError('amount') }}
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-md-6">
+                            <label for="categoryId" class="form-label">
+                                Category <span class="text-danger">*</span>
+                            </label>
+                            <select id="categoryId" class="form-select"
+                                [class.is-invalid]="isFieldInvalid('categoryId')" formControlName="categoryId"
+                                [disabled]="isLoading">
+                                <option value="">Select a category</option>
+                                @for (category of categories; track category) {
+                                <option [value]="category.categoryId">
+                                    {{ category.categoryName }}
+                                </option>
+                                }
+                            </select>
+                            @if (isFieldInvalid('categoryId')) {
+                            <div class="invalid-feedback">
+                                {{ getFieldError('categoryId') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Transaction Type -->
+                        <div class="col-md-6">
+                            <label for="transactionTypeID" class="form-label">
+                                Transaction Type <span class="text-danger">*</span>
+                            </label>
+                            <select id="transactionTypeID" class="form-select"
+                                [class.is-invalid]="isFieldInvalid('transactionTypeID')"
+                                formControlName="transactionTypeID" [disabled]="isLoading">
+                                <option value="">Select transaction type</option>
+                                @for (type of transactionTypes; track type) {
+                                <option [value]="type.transactionTypeID">
+                                    {{ type.transactionTypeName }}
+                                </option>
+                                }
+                            </select>
+                            @if (isFieldInvalid('transactionTypeID')) {
+                            <div class="invalid-feedback">
+                                {{ getFieldError('transactionTypeID') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-md-3">
+                            <label for="date" class="form-label">
+                                Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" id="date" class="form-control"
+                                [class.is-invalid]="isFieldInvalid('date')" formControlName="date"
+                                [disabled]="isLoading">
+                            @if (isFieldInvalid('date')) {
+                            <div class="invalid-feedback">
+                                {{ getFieldError('date') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Time -->
+                        <div class="col-md-3">
+                            <label for="time" class="form-label">
+                                Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" id="time" class="form-control"
+                                [class.is-invalid]="isFieldInvalid('time')" formControlName="time"
+                                [disabled]="isLoading">
+                            @if (isFieldInvalid('time')) {
+                            <div class="invalid-feedback">
+                                {{ getFieldError('time') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-md-12">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea id="notes" class="form-control" formControlName="notes" rows="3"
+                                placeholder="Add any additional notes about this transaction"
+                                [disabled]="isLoading"></textarea>
+                        </div>
                     </div>
 
-                    <!-- Notes -->
-                    <div class="col-md-12">
-                      <label for="notes" class="form-label">Notes (Optional)</label>
-                      <textarea
-                        id="notes"
-                        class="form-control"
-                        formControlName="notes"
-                        rows="3"
-                        placeholder="Add any additional notes about this transaction"
-                      [disabled]="isLoading"></textarea>
+                    <!-- Form Actions -->
+                    <div class="form-actions mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()"
+                            [disabled]="isLoading">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
+                            @if (isLoading) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            }
+                            @if (!isLoading) {
+                            <i class="bi bi-check-circle me-2"></i>
+                            }
+                            {{ isLoading ? 'Adding...' : 'Add Transaction' }}
+                        </button>
                     </div>
-                  </div>
-
-                  <!-- Form Actions -->
-                  <div class="form-actions mt-4 pt-3 border-top">
-                    <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isLoading">
-                      Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid || isLoading">
-                      @if (isLoading) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      }
-                      @if (!isLoading) {
-                        <i class="bi bi-check-circle me-2"></i>
-                      }
-                      {{ isLoading ? 'Adding...' : 'Add Transaction' }}
-                    </button>
-                  </div>
                 </form>
-              </div>
             </div>
-          </div>
         </div>
+    </div>
+</div>

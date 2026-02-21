@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {Observable, catchError, throwError, map, retry, firstValueFrom} from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
@@ -14,8 +14,11 @@ export class InitialDataService {
     private http: HttpClient = inject(HttpClient);
     private transactionTypes: TransactionType[] = [];
     private categories: CategoryOption[] = [];
-    private isTransactionTypesLoaded: boolean = false;
-    private isCategoriesLoaded: boolean = false;
+    private isTransactionTypesLoaded = signal(false);
+    private isCategoriesLoaded = signal(false);
+
+    readonly areTransactionTypesLoaded = this.isTransactionTypesLoaded.asReadonly();
+    readonly areCategoriesLoaded = this.isCategoriesLoaded.asReadonly();
 
     initializeAppData(): Promise<void> {
         return Promise.all([
@@ -37,7 +40,7 @@ export class InitialDataService {
                     transactionTypeID: apiType.transactionTypeID,
                     transactionTypeName: apiType.transactionTypeName
                 }));
-                this.isTransactionTypesLoaded = true;
+                this.isTransactionTypesLoaded.set(true);
                 return this.transactionTypes;
             }),
             retry({
@@ -56,10 +59,6 @@ export class InitialDataService {
         return this.transactionTypes;
     }
 
-    get areTransactionTypesLoaded(): boolean {
-        return this.isTransactionTypesLoaded;
-    }
-
     loadCategories(): Observable<CategoryOption[]> {
         const url = `${environment.baseUrl}/${api.getCategories}`;
 
@@ -73,7 +72,7 @@ export class InitialDataService {
                     categoryId: apiCategory.categoryId,
                     categoryName: apiCategory.categoryName
                 }));
-                this.isCategoriesLoaded = true;
+                this.isCategoriesLoaded.set(true);
                 return this.categories;
             }),
             retry({
@@ -92,8 +91,6 @@ export class InitialDataService {
         return this.categories;
     }
 
-    get areCategoriesLoaded(): boolean {
-        return this.isCategoriesLoaded;
-    }
+    
 }
 

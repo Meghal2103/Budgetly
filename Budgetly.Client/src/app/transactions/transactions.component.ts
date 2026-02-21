@@ -83,15 +83,15 @@ export class TransactionsComponent implements OnInit {
     const transactionTypes = this.initialDataService.getTransactionTypes();
 
     return transactions.map(t => {
-      const category = categories.find(c => c.id === t.categoryId);
-      const transactionType = transactionTypes.find(tt => tt.id === t.transactionTypeID);
+      const category = categories.find(c => c.categoryId === t.categoryId);
+      const transactionType = transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
 
       return {
         id: t.transactionId,
         title: (t as any).title || 'Untitled Transaction',
         amount: t.amount,
-        category: category?.name || 'Unknown',
-        transactionType: transactionType?.name || 'Unknown',
+        category: category?.categoryName || 'Unknown',
+        transactionType: transactionType?.transactionTypeName || 'Unknown',
         date: new Date(t.dateTime),
         notes: t.notes || undefined
       };
@@ -104,11 +104,11 @@ export class TransactionsComponent implements OnInit {
     const transactionTypes = this.initialDataService.getTransactionTypes();
 
     if (categories.length > 0) {
-      this.categories = ['All Categories', ...categories.map(c => c.name)];
+      this.categories = ['All Categories', ...categories.map(c => c.categoryName)];
     }
 
     if (transactionTypes.length > 0) {
-      this.paymentModes = ['All Payment Types', ...transactionTypes.map(t => t.name)];
+      this.paymentModes = ['All Payment Types', ...transactionTypes.map(t => t.transactionTypeName)];
     }
   }
 
