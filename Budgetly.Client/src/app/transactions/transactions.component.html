@@ -18,9 +18,7 @@
                     <!-- Search Input -->
                     <div class="col-md-4">
                         <label class="form-label small text-muted">Search</label>
-                        <input type="text" class="form-control"
-                            placeholder="Search by description, category, or payment mode..." [(ngModel)]="searchText"
-                            (ngModelChange)="onSearchChange()">
+                        <input type="text" class="form-control" placeholder="Search by description, category, or payment mode..." [(ngModel)]="searchText" (ngModelChange)="onSearchChange()">
                     </div>
 
                     <!-- Category Filter -->
@@ -28,9 +26,9 @@
                         <label class="form-label small text-muted">Category</label>
                         <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
                             @for (category of categories; track category) {
-                            <option [value]="category">
-                                {{ category }}
-                            </option>
+                                <option [value]="category.categoryId">
+                                    {{ category.categoryName }}
+                                </option>
                             }
                         </select>
                     </div>
@@ -38,12 +36,11 @@
                     <!-- Payment Mode Filter -->
                     <div class="col-md-2">
                         <label class="form-label small text-muted">Payment Mode</label>
-                        <select class="form-select" [(ngModel)]="selectedPaymentMode"
-                            (ngModelChange)="onPaymentModeChange()">
-                            @for (mode of paymentModes; track mode) {
-                            <option [value]="mode">
-                                {{ mode }}
-                            </option>
+                        <select class="form-select" [(ngModel)]="selectedTransactionType" (ngModelChange)="onPaymentModeChange()">
+                            @for (mode of transactionTypes; track mode) {
+                                <option [value]="mode.transactionTypeID">
+                                    {{ mode.transactionTypeName }}
+                                </option>
                             }
                         </select>
                     </div>
@@ -51,14 +48,14 @@
                     <!-- Date Filter -->
                     <div class="col-md-2">
                         <label class="form-label small text-muted">Date</label>
-                        <input type="date" class="form-control" [(ngModel)]="selectedDate"
-                            (ngModelChange)="onDateChange()">
+                        <input type="date" class="form-control" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange()">
                     </div>
 
                     <!-- Clear Filters Button -->
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
-                            <i class="bi bi-x-circle me-2"></i>Clear Filters
+                            <i class="bi bi-x-circle me-2"></i>
+                            Clear Filters
                         </button>
                     </div>
                 </div>

@@ -18,3 +18,28 @@ export interface AddTransactionRequest {
     amount: number;
     notes: string;
 }
+
+export interface Transaction {
+    id: number;
+    title: string;
+    amount: number;
+    category: string;
+    transactionType: string;
+    date: Date;
+    notes?: string;
+}
+
+export interface TransactionSearchDTO {
+    searchText: string;
+    categoryId: number | null;
+    transactionTypeID: number | null;
+    startDate: Date | null;
+    endDate: Date | null;
+}
+
+export interface TransactionsDTO {
+    totalCount: number;
+    pageSize: number;
+    currentPage: number;
+    transactions: TransactionDTO[];
+}
