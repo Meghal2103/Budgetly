@@ -6,6 +6,10 @@ namespace Budgetly.Core.DTOs.Transaction
     public class AddEditTransaction
     {
         [Required]
+        [StringLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
         public int UserId { get; set; }
 
         [Required]

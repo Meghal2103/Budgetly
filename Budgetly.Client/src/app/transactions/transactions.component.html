@@ -1,156 +1,143 @@
 <div class="transactions-container">
-  <!-- Header Section -->
-  <div class="header-section mb-4 d-flex justify-content-between align-items-center">
-    <div>
-      <h2 class="mb-2">All Transactions</h2>
-      <p class="text-muted mb-0">View and manage your transaction history</p>
+    <!-- Header Section -->
+    <div class="header-section mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-2">All Transactions</h2>
+            <p class="text-muted mb-0">View and manage your transaction history</p>
+        </div>
+        <button class="btn btn-primary" (click)="addTransaction()">
+            <i class="bi bi-plus-circle me-2"></i>Add Transaction
+        </button>
     </div>
-    <button class="btn btn-primary" (click)="addTransaction()">
-      <i class="bi bi-plus-circle me-2"></i>Add Transaction
-    </button>
-  </div>
 
-  <!-- Filters Section -->
-  <div class="filters-section mb-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="row g-3">
-          <!-- Search Input -->
-          <div class="col-md-4">
-            <label class="form-label small text-muted">Search</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search by description, category, or payment mode..."
-              [(ngModel)]="searchText"
-              (ngModelChange)="onSearchChange()">
-            </div>
-
-            <!-- Category Filter -->
-            <div class="col-md-2">
-              <label class="form-label small text-muted">Category</label>
-              <select
-                class="form-select"
-                [(ngModel)]="selectedCategory"
-                (ngModelChange)="onCategoryChange()">
-                @for (category of categories; track category) {
-                  <option [value]="category">
-                    {{ category }}
-                  </option>
-                }
-              </select>
-            </div>
-
-            <!-- Payment Mode Filter -->
-            <div class="col-md-2">
-              <label class="form-label small text-muted">Payment Mode</label>
-              <select
-                class="form-select"
-                [(ngModel)]="selectedPaymentMode"
-                (ngModelChange)="onPaymentModeChange()">
-                @for (mode of paymentModes; track mode) {
-                  <option [value]="mode">
-                    {{ mode }}
-                  </option>
-                }
-              </select>
-            </div>
-
-            <!-- Date Filter -->
-            <div class="col-md-2">
-              <label class="form-label small text-muted">Date</label>
-              <input
-                type="date"
-                class="form-control"
-                [(ngModel)]="selectedDate"
-                (ngModelChange)="onDateChange()">
-              </div>
-
-              <!-- Clear Filters Button -->
-              <div class="col-md-2 d-flex align-items-end">
-                <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
-                  <i class="bi bi-x-circle me-2"></i>Clear Filters
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Error Message -->
-      @if (errorMessage) {
-        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          {{ errorMessage }}
-          <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
-        </div>
-      }
-
-      <!-- Transactions Table -->
-      <div class="transactions-table-section">
+    <!-- Filters Section -->
+    <div class="filters-section mb-4">
         <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Transactions ({{ filteredTransactions.length }})</h5>
-          </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Date & Time</th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Transaction Type</th>
-                    <th class="text-end">Amount</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @if (isLoading) {
-                    <tr>
-                      <td colspan="6" class="text-center text-muted py-4">
-                        <div class="spinner-border spinner-border-sm me-2" role="status">
-                          <span class="visually-hidden">Loading...</span>
-                        </div>
-                        Loading transactions...
-                      </td>
-                    </tr>
-                  }
-                  @if (!isLoading && filteredTransactions.length === 0) {
-                    <tr>
-                      <td colspan="6" class="text-center text-muted py-4">
-                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
-                        <p class="mt-2 mb-0">No transactions found</p>
-                      </td>
-                    </tr>
-                  }
-                  @for (transaction of filteredTransactions; track transaction) {
-                    <tr
-                      (click)="viewTransactionDetails(transaction.id)"
-                      style="cursor: pointer;">
-                      <td>{{ formatDateTime(transaction.date) }}</td>
-                      <td>{{ transaction.title }}</td>
-                      <td>
-                        <span class="badge bg-secondary">{{ transaction.category }}</span>
-                      </td>
-                      <td>{{ transaction.transactionType }}</td>
-                      <td class="text-end fw-semibold">{{ formatCurrency(transaction.amount) }}</td>
-                      <td>
-                        @if (transaction.notes) {
-                          <span class="text-muted small">
-                            <i class="bi bi-sticky"></i> {{ transaction.notes }}
-                          </span>
-                        }
-                        @if (!transaction.notes) {
-                          <span class="text-muted">-</span>
-                        }
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Search Input -->
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Search</label>
+                        <input type="text" class="form-control"
+                            placeholder="Search by description, category, or payment mode..." [(ngModel)]="searchText"
+                            (ngModelChange)="onSearchChange()">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Category</label>
+                        <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
+                            @for (category of categories; track category) {
+                            <option [value]="category">
+                                {{ category }}
+                            </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Payment Mode Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Payment Mode</label>
+                        <select class="form-select" [(ngModel)]="selectedPaymentMode"
+                            (ngModelChange)="onPaymentModeChange()">
+                            @for (mode of paymentModes; track mode) {
+                            <option [value]="mode">
+                                {{ mode }}
+                            </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Date Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Date</label>
+                        <input type="date" class="form-control" [(ngModel)]="selectedDate"
+                            (ngModelChange)="onDateChange()">
+                    </div>
+
+                    <!-- Clear Filters Button -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+                            <i class="bi bi-x-circle me-2"></i>Clear Filters
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
+
+    <!-- Error Message -->
+    @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+    </div>
+    }
+
+    <!-- Transactions Table -->
+    <div class="transactions-table-section">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Transactions ({{ allTransactions.length }})</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Transaction Type</th>
+                                <th class="text-end">Amount</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (isLoading()) {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    Loading transactions...
+                                </td>
+                            </tr>
+                            }
+                            @if (!isLoading() && allTransactions.length === 0) {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mt-2 mb-0">No transactions found</p>
+                                </td>
+                            </tr>
+                            }
+                            @for (transaction of allTransactions; track transaction) {
+                            <tr (click)="viewTransactionDetails(transaction.id)" style="cursor: pointer;">
+                                <td>{{ formatDateTime(transaction.date) }}</td>
+                                <td>{{ transaction.title }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ transaction.category }}</span>
+                                </td>
+                                <td>{{ transaction.transactionType }}</td>
+                                <td class="text-end fw-semibold">{{ formatCurrency(transaction.amount) }}</td>
+                                <td>
+                                    @if (transaction.notes) {
+                                    <span class="text-muted small">
+                                        <i class="bi bi-sticky"></i> {{ transaction.notes }}
+                                    </span>
+                                    }
+                                    @if (!transaction.notes) {
+                                    <span class="text-muted">-</span>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

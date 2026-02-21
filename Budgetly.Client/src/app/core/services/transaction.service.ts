@@ -4,6 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { AddTransactionRequest, TransactionDTO } from '../models/transaction/transaction.model';
+import { api } from '../enums/api.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class TransactionService {
     private http: HttpClient = inject(HttpClient);
 
     addTransaction(transaction: AddTransactionRequest): Observable<APIResponse<TransactionDTO>> {
-        const url = `${environment.baseUrl}/api/Transaction/add-transaction`;
+        const url = `${environment.baseUrl}/${api.addTransaction}`;
 
         return this.http.post<APIResponse<TransactionDTO>>(url, transaction).pipe(
             catchError((errorResponse: HttpErrorResponse) => {
@@ -24,7 +25,7 @@ export class TransactionService {
     }
 
     getTransactions(): Observable<APIResponse<TransactionDTO[]>> {
-        const url = `${environment.baseUrl}/api/Transaction/get-transactions`;
+        const url = `${environment.baseUrl}/${api.getTransaction}`;
 
         return this.http.get<APIResponse<TransactionDTO[]>>(url).pipe(
             catchError((errorResponse: HttpErrorResponse) => {

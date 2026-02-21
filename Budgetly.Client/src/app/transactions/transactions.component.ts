@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
 import { TransactionDTO } from '../core/models/transaction/transaction.model';
 import { FormsModule } from "@angular/forms";
+import { CategoryOption } from '../core/models/transaction/category.model';
+import { TransactionType } from '../core/models/transaction/transaction-type.model';
 
 interface Transaction {
   id: number;
@@ -22,69 +24,49 @@ interface Transaction {
   styleUrls: ['./transactions.component.scss']
 })
 export class TransactionsComponent implements OnInit {
+  private transactionService = inject(TransactionService);
+  private initialDataService = inject(InitialDataService);
+  private router = inject(Router);
   analysisTypeId: number | null = null;
 
   // Transaction data
   allTransactions: Transaction[] = [];
-  filteredTransactions: Transaction[] = [];
-  isLoading: boolean = false;
+  isLoading = signal(true);
   errorMessage: string = '';
 
-  // Filter options (UI only - not implemented)
-  categories: string[] = ['All Categories'];
-  paymentModes: string[] = ['All Payment Types'];
+  categories: CategoryOption[] = this.initialDataService.getCategories();
+  transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
 
-  // Filter values (UI only - not implemented)
-  selectedCategory: string = 'All Categories';
-  selectedPaymentMode: string = 'All Payment Types';
   selectedDate: Date | null = null;
   searchText: string = '';
 
-  constructor(
-    private router: Router,
-    private transactionService: TransactionService,
-    private initialDataService: InitialDataService
-  ) {
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state as { analysisTypeId?: number } | undefined;
-    this.analysisTypeId = state?.analysisTypeId ?? null;
-  }
-
   ngOnInit(): void {
     this.loadTransactions();
-    this.loadFilterOptions();
   }
 
   private loadTransactions(): void {
-    this.isLoading = true;
     this.errorMessage = '';
 
     this.transactionService.getTransactions().subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.allTransactions = this.mapTransactions(response.data);
-          this.filteredTransactions = [...this.allTransactions];
-          // Sort by date (most recent first)
-          this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
         } else {
           this.errorMessage = response.message || 'Failed to load transactions';
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
       error: (error) => {
         this.errorMessage = error.message || 'An error occurred while loading transactions';
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
 
   private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
-    const categories = this.initialDataService.getCategories();
-    const transactionTypes = this.initialDataService.getTransactionTypes();
-
     return transactions.map(t => {
-      const category = categories.find(c => c.categoryId === t.categoryId);
-      const transactionType = transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
+      const category = this.categories.find(c => c.categoryId === t.categoryId);
+      const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
 
       return {
         id: t.transactionId,
@@ -98,49 +80,28 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
-  private loadFilterOptions(): void {
-    // Load categories and transaction types for filter dropdowns (UI only)
-    const categories = this.initialDataService.getCategories();
-    const transactionTypes = this.initialDataService.getTransactionTypes();
-
-    if (categories.length > 0) {
-      this.categories = ['All Categories', ...categories.map(c => c.categoryName)];
-    }
-
-    if (transactionTypes.length > 0) {
-      this.paymentModes = ['All Payment Types', ...transactionTypes.map(t => t.transactionTypeName)];
-    }
-  }
-
-  applyFilters(): void {
-    // Filter logic is kept but not implemented - just show all transactions
-    // UI components are kept for future implementation
-    this.filteredTransactions = [...this.allTransactions];
-    this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
-  }
-
   onCategoryChange(): void {
-    this.applyFilters();
+    // this.applyFilters();
   }
 
   onPaymentModeChange(): void {
-    this.applyFilters();
+    // this.applyFilters();
   }
 
   onDateChange(): void {
-    this.applyFilters();
+    // this.applyFilters();
   }
 
   onSearchChange(): void {
-    this.applyFilters();
+    // this.applyFilters();
   }
 
   clearFilters(): void {
-    this.selectedCategory = 'All Categories';
-    this.selectedPaymentMode = 'All Payment Types';
-    this.selectedDate = null;
-    this.searchText = '';
-    this.applyFilters();
+    // this.selectedCategory = 'All Categories';
+    // this.selectedPaymentMode = 'All Payment Types';
+    // this.selectedDate = null;
+    // this.searchText = '';
+    // this.applyFilters();
   }
 
   addTransaction(): void {
