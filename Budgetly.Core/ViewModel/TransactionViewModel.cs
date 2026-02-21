@@ -7,6 +7,8 @@ namespace Budgetly.Core.ViewModel
     {
         public int TransactionId { get; set; }
 
+        public string Title { get; set; }
+
         public int UserId { get; set; }
 
         public int CategoryId { get; set; }

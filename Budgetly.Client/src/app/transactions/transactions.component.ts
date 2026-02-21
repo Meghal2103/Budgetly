@@ -8,7 +8,6 @@ import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
 import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
-import { last } from 'rxjs';
 
 @Component({
     selector: 'app-transactions',
@@ -72,6 +71,7 @@ export class TransactionsComponent implements OnInit {
                     this.totalCount = response.data.totalCount;
                     this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
                     this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
+                    this.ensurePageSizeOption(response.data.pageSize);
                 } else {
                     this.errorMessage = response.message || 'Failed to load transactions';
                 }
@@ -88,10 +88,11 @@ export class TransactionsComponent implements OnInit {
         return transactions.map(t => {
             const category = this.categories.find(c => c.categoryId === t.categoryId);
             const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
+            const title = this.resolveTransactionTitle(t);
 
             return {
                 id: t.transactionId,
-                title: (t as any).title || 'Untitled Transaction',
+                title,
                 amount: t.amount,
                 category: category?.categoryName || 'Unknown',
                 transactionType: transactionType?.transactionTypeName || 'Unknown',
@@ -167,5 +168,21 @@ export class TransactionsComponent implements OnInit {
     getPageNumbers(): number[] {
         const lastPage = this.getLastPage();
         return Array.from({ length: lastPage }, (_, index) => index + 1);
+    }
+
+    private resolveTransactionTitle(transaction: TransactionDTO): string {
+        const rawTitle = (transaction as any).title
+            ?? (transaction as any).transactionTitle
+            ?? (transaction as any).description
+            ?? (transaction as any).name;
+
+        const title = typeof rawTitle === 'string' ? rawTitle.trim() : '';
+        return title.length > 0 ? title : 'Untitled Transaction';
+    }
+
+    private ensurePageSizeOption(pageSize: number): void {
+        if (!this.pageSizeArray.includes(pageSize)) {
+            this.pageSizeArray = [...this.pageSizeArray, pageSize].sort((a, b) => a - b);
+        }
     }
 }
