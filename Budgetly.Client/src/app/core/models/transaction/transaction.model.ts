@@ -35,6 +35,8 @@ export interface TransactionSearchDTO {
     transactionTypeID: number | null;
     startDate: Date | null;
     endDate: Date | null;
+    pageSize: number | null;
+    pageNumber: number | null;
 }
 
 export interface TransactionsDTO {

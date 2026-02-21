@@ -2,15 +2,15 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
-import { TransactionDTO } from '../core/models/transaction/transaction.model';
-import { Transaction } from '../core/models/transaction/transaction.model';
-import { FormsModule } from "@angular/forms";
+import { TransactionDTO, Transaction, TransactionSearchDTO } from '../core/models/transaction/transaction.model';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
+import { PAGE_CONFIG } from '../core/config/page.config';
 
 @Component({
     selector: 'app-transactions',
-    imports: [FormsModule],
+    imports: [ReactiveFormsModule],
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.scss']
 })
@@ -18,19 +18,37 @@ export class TransactionsComponent implements OnInit {
     private transactionService = inject(TransactionService);
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
+    private formBuilder = inject(FormBuilder);
+    pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
+    pageSize = PAGE_CONFIG.DEFAULT_PAGE_SIZE;
+    pageNumber = 1;
     analysisTypeId: number | null = null;
 
     // Transaction data
     allTransactions: Transaction[] = [];
+    filteredTransactions: Transaction[] = [];
     isLoading = signal(true);
     errorMessage: string = '';
 
     categories: CategoryOption[] = this.initialDataService.getCategories();
     transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
-    selectedCategory: number = 0;
-    selectedTransactionType: number = 0;
-    selectedDate: Date | null = null;
-    searchText: string = '';
+        searchForm: FormGroup = this.formBuilder.group({
+        searchText: [''],
+        categoryId: [0],
+        transactionTypeId: [0],
+        startDate: [''],
+        endDate: ['']
+    });
+
+    transactionSearchDTO: TransactionSearchDTO = {
+        searchText: '',
+        categoryId: null,
+        transactionTypeID: null,
+        startDate: null,
+        endDate: null,
+        pageSize: null,
+        pageNumber: null
+    };
 
     ngOnInit(): void {
         this.loadTransactions();
@@ -72,28 +90,27 @@ export class TransactionsComponent implements OnInit {
         });
     }
 
-    onCategoryChange(): void {
-        // this.applyFilters();
-    }
-
-    onPaymentModeChange(): void {
-        // this.applyFilters();
-    }
-
-    onDateChange(): void {
-        // this.applyFilters();
-    }
-
-    onSearchChange(): void {
-        // this.applyFilters();
+    onFiltersChange(): void {
+        const formValue = this.searchForm.getRawValue();
+        this.transactionSearchDTO = {
+            searchText: formValue.searchText.trim(),
+            categoryId: formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId,
+            startDate: formValue.startDate,
+            endDate: formValue.endDate,
+            pageSize: this.pageSize,
+            pageNumber: this.pageNumber
+        };
     }
 
     clearFilters(): void {
-        // this.selectedCategory = 'All Categories';
-        // this.selectedPaymentMode = 'All Payment Types';
-        // this.selectedDate = null;
-        // this.searchText = '';
-        // this.applyFilters();
+        this.searchForm.setValue({
+            searchText: '',
+            categoryId: 0,
+            transactionTypeId: 0,
+            startDate: '',
+            endDate: ''
+        });
     }
 
     addTransaction(): void {

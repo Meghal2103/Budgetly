@@ -14,41 +14,49 @@
     <div class="filters-section mb-4">
         <div class="card">
             <div class="card-body">
-                <div class="row g-3">
+                <form [formGroup]="searchForm" class="row g-3">
                     <!-- Search Input -->
                     <div class="col-md-4">
                         <label class="form-label small text-muted">Search</label>
-                        <input type="text" class="form-control" placeholder="Search by description, category, or payment mode..." [(ngModel)]="searchText" (ngModelChange)="onSearchChange()">
+                        <input type="text" class="form-control" placeholder="Search by description, category, or transaction type..." formControlName="searchText">
                     </div>
 
                     <!-- Category Filter -->
                     <div class="col-md-2">
                         <label class="form-label small text-muted">Category</label>
-                        <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
-                            @for (category of categories; track category) {
-                                <option [value]="category.categoryId">
-                                    {{ category.categoryName }}
-                                </option>
+                        <select class="form-select" formControlName="categoryId">
+                            <option [ngValue]="0">All Categories</option>
+                            @for (category of categories; track category.categoryId) {
+                            <option [ngValue]="category.categoryId">
+                                {{ category.categoryName }}
+                            </option>
                             }
                         </select>
                     </div>
 
-                    <!-- Payment Mode Filter -->
+                    <!-- Transaction Type Filter -->
                     <div class="col-md-2">
-                        <label class="form-label small text-muted">Payment Mode</label>
-                        <select class="form-select" [(ngModel)]="selectedTransactionType" (ngModelChange)="onPaymentModeChange()">
-                            @for (mode of transactionTypes; track mode) {
-                                <option [value]="mode.transactionTypeID">
-                                    {{ mode.transactionTypeName }}
-                                </option>
+                        <label class="form-label small text-muted">Transaction Type</label>
+                        <select class="form-select" formControlName="transactionTypeId">
+                            <option [ngValue]="0">All Types</option>
+                            @for (mode of transactionTypes; track mode.transactionTypeID) {
+                            <option [ngValue]="mode.transactionTypeID">
+                                {{ mode.transactionTypeName }}
+                            </option>
                             }
                         </select>
                     </div>
 
-                    <!-- Date Filter -->
+                    <!-- Start Date Filter -->
                     <div class="col-md-2">
-                        <label class="form-label small text-muted">Date</label>
-                        <input type="date" class="form-control" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange()">
+                        <label class="form-label small text-muted">Start Date</label>
+                        <input type="date" class="form-control" formControlName="startDate">
+                    </div>
+
+                    <!-- End Date Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">End Date</label>
+                        <input type="date" class="form-control" formControlName="endDate">
                     </div>
 
                     <!-- Clear Filters Button -->
@@ -58,7 +66,7 @@
                             Clear Filters
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
