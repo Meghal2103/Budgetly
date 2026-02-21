@@ -20,9 +20,9 @@ export class TransactionsComponent implements OnInit {
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
-    pageSize = PAGE_CONFIG.DEFAULT_PAGE_SIZE;
-    pageNumber = 1;
     analysisTypeId: number | null = null;
+
+    totalCount = 1// Placeholder, should be set from API response
 
     // Transaction data
     allTransactions: Transaction[] = [];
@@ -32,12 +32,16 @@ export class TransactionsComponent implements OnInit {
 
     categories: CategoryOption[] = this.initialDataService.getCategories();
     transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
-        searchForm: FormGroup = this.formBuilder.group({
+    searchForm: FormGroup = this.formBuilder.group({
         searchText: [''],
         categoryId: [0],
         transactionTypeId: [0],
         startDate: [''],
         endDate: ['']
+    });
+    paginationForm: FormGroup = this.formBuilder.group({
+        pageSize: [PAGE_CONFIG.DEFAULT_PAGE_SIZE],
+        pageNumber: [1]
     });
 
     transactionSearchDTO: TransactionSearchDTO = {
@@ -51,6 +55,8 @@ export class TransactionsComponent implements OnInit {
     };
 
     ngOnInit(): void {
+        this.searchForm.valueChanges.subscribe(() => this.onFiltersChange());
+        this.paginationForm.valueChanges.subscribe(() => this.onFiltersChange());
         this.loadTransactions();
     }
 
@@ -92,14 +98,15 @@ export class TransactionsComponent implements OnInit {
 
     onFiltersChange(): void {
         const formValue = this.searchForm.getRawValue();
+        const paginationValue = this.paginationForm.getRawValue();
         this.transactionSearchDTO = {
             searchText: formValue.searchText.trim(),
             categoryId: formValue.categoryId,
             transactionTypeID: formValue.transactionTypeId,
             startDate: formValue.startDate,
             endDate: formValue.endDate,
-            pageSize: this.pageSize,
-            pageNumber: this.pageNumber
+            pageSize: paginationValue.pageSize,
+            pageNumber: paginationValue.pageNumber
         };
     }
 
@@ -145,5 +152,10 @@ export class TransactionsComponent implements OnInit {
             hour: '2-digit',
             minute: '2-digit'
         }).format(date);
+    }
+
+    getPageNumbers(): number[] {
+        const pageSize = this.paginationForm.get('pageSize')?.value ?? PAGE_CONFIG.DEFAULT_PAGE_SIZE;
+        return Array.from({ length: Math.max(1, Math.ceil(this.totalCount / pageSize)) }, (_, index) => index + 1);
     }
 }
