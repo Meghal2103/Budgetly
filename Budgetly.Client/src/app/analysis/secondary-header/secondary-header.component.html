@@ -6,23 +6,16 @@
                 <div class="d-flex gap-3 align-items-center">
                     <div class="filter-group">
                         <label class="form-label mb-1 small text-muted">Category</label>
-                        <p-dropdown 
-                            [options]="categories" 
-                            [(ngModel)]="selectedCategory"
-                            placeholder="Select Category"
-                            [style]="{'width': '100%', 'min-width': '200px'}"
-                            class="w-100">
-                        </p-dropdown>
+                        <p-select [options]="categories" [(ngModel)]="selectedCategory" placeholder="Select Category"
+                            [style]="{'width': '100%', 'min-width': '200px'}" class="w-100">
+                        </p-select>
                     </div>
                     <div class="filter-group">
                         <label class="form-label mb-1 small text-muted">Payment Type</label>
-                        <p-dropdown 
-                            [options]="paymentTypes" 
-                            [(ngModel)]="selectedPaymentType"
-                            placeholder="Select Payment Type"
-                            [style]="{'width': '100%', 'min-width': '200px'}"
+                        <p-select [options]="paymentTypes" [(ngModel)]="selectedPaymentType"
+                            placeholder="Select Payment Type" [style]="{'width': '100%', 'min-width': '200px'}"
                             class="w-100">
-                        </p-dropdown>
+                        </p-select>
                     </div>
                 </div>
             </div>
@@ -31,16 +24,10 @@
             <div class="col-md-6 d-flex justify-content-end">
                 <div class="filter-group">
                     <label class="form-label mb-1 small text-muted">Date Range</label>
-                    <p-calendar 
-                        [(ngModel)]="dateRange"
-                        selectionMode="range"
-                        [readonlyInput]="true"
-                        [showIcon]="true"
-                        placeholder="Select Date Range"
-                        dateFormat="dd/mm/yy"
-                        [style]="{'width': '100%', 'min-width': '300px'}"
-                        class="w-100">
-                    </p-calendar>
+                    <p-datepicker [(ngModel)]="dateRange" selectionMode="range" [readonlyInput]="true" [showIcon]="true"
+                        placeholder="Select Date Range" dateFormat="dd/mm/yy"
+                        [style]="{'width': '100%', 'min-width': '300px'}" class="w-100">
+                    </p-datepicker>
                 </div>
             </div>
         </div>

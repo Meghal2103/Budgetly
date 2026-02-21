@@ -1,134 +1,135 @@
 <div class="transaction-details-container">
-    <!-- Header Section -->
-    <div class="header-section mb-4">
-        <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onBack()">
-            <i class="bi bi-arrow-left me-2"></i>Back to Transactions
+  <!-- Header Section -->
+  <div class="header-section mb-4">
+    <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onBack()">
+      <i class="bi bi-arrow-left me-2"></i>Back to Transactions
+    </button>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="mb-2">Transaction Details</h2>
+        <p class="text-muted mb-0">View complete transaction information</p>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-outline-primary me-2" (click)="onEdit()">
+          <i class="bi bi-pencil me-2"></i>Edit
         </button>
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h2 class="mb-2">Transaction Details</h2>
-                <p class="text-muted mb-0">View complete transaction information</p>
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-outline-primary me-2" (click)="onEdit()">
-                    <i class="bi bi-pencil me-2"></i>Edit
-                </button>
-                <button class="btn btn-outline-danger" (click)="onDelete()">
-                    <i class="bi bi-trash me-2"></i>Delete
-                </button>
-            </div>
-        </div>
+        <button class="btn btn-outline-danger" (click)="onDelete()">
+          <i class="bi bi-trash me-2"></i>Delete
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Transaction Details Card -->
-    <div class="details-section" *ngIf="transaction">
-        <div class="row g-4">
-            <!-- Main Details Card -->
-            <div class="col-md-8">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0">Transaction Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Description -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i class="bi bi-receipt me-2"></i>Description
-                            </div>
-                            <div class="detail-value">
-                                {{ transaction.description }}
-                            </div>
-                        </div>
-
-                        <!-- Amount -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i class="bi bi-cash-stack me-2"></i>Amount
-                            </div>
-                            <div class="detail-value amount-value">
-                                {{ formatCurrency(transaction.amount) }}
-                            </div>
-                        </div>
-
-                        <!-- Category -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i [class]="'bi ' + getCategoryIcon(transaction.category) + ' me-2'"></i>Category
-                            </div>
-                            <div class="detail-value">
-                                <span class="badge bg-primary">{{ transaction.category }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Payment Mode -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i [class]="'bi ' + getPaymentModeIcon(transaction.paymentMode) + ' me-2'"></i>Payment Mode
-                            </div>
-                            <div class="detail-value">
-                                <span class="badge bg-info">{{ transaction.paymentMode }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Date & Time -->
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="bi bi-calendar-event me-2"></i>Date & Time
-                            </div>
-                            <div class="detail-value">
-                                {{ formatDateTime(transaction.date) }}
-                            </div>
-                        </div>
-                    </div>
+  <!-- Transaction Details Card -->
+  @if (transaction) {
+    <div class="details-section">
+      <div class="row g-4">
+        <!-- Main Details Card -->
+        <div class="col-md-8">
+          <div class="card h-100">
+            <div class="card-header">
+              <h5 class="mb-0">Transaction Information</h5>
+            </div>
+            <div class="card-body">
+              <!-- Description -->
+              <div class="detail-item mb-4">
+                <div class="detail-label">
+                  <i class="bi bi-receipt me-2"></i>Description
                 </div>
-            </div>
-
-            <!-- Additional Information Card -->
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0">Additional Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Transaction ID -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label small">Transaction ID</div>
-                            <div class="detail-value small">
-                                #{{ transaction.id }}
-                            </div>
-                        </div>
-
-                        <!-- Date -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label small">Date</div>
-                            <div class="detail-value small">
-                                {{ formatDate(transaction.date) }}
-                            </div>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="detail-item">
-                            <div class="detail-label small">
-                                <i class="bi bi-sticky me-2"></i>Notes
-                            </div>
-                            <div class="detail-value small notes-value" *ngIf="transaction.notes">
-                                {{ transaction.notes }}
-                            </div>
-                            <div class="detail-value small text-muted" *ngIf="!transaction.notes">
-                                <em>No notes available</em>
-                            </div>
-                        </div>
-                    </div>
+                <div class="detail-value">
+                  {{ transaction.description }}
                 </div>
+              </div>
+              <!-- Amount -->
+              <div class="detail-item mb-4">
+                <div class="detail-label">
+                  <i class="bi bi-cash-stack me-2"></i>Amount
+                </div>
+                <div class="detail-value amount-value">
+                  {{ formatCurrency(transaction!.amount) }}
+                </div>
+              </div>
+              <!-- Category -->
+              <div class="detail-item mb-4">
+                <div class="detail-label">
+                  <i [class]="'bi ' + getCategoryIcon(transaction!.category) + ' me-2'"></i>Category
+                </div>
+                <div class="detail-value">
+                  <span class="badge bg-primary">{{ transaction!.category }}</span>
+                </div>
+              </div>
+              <!-- Payment Mode -->
+              <div class="detail-item mb-4">
+                <div class="detail-label">
+                  <i [class]="'bi ' + getPaymentModeIcon(transaction!.paymentMode) + ' me-2'"></i>Payment Mode
+                </div>
+                <div class="detail-value">
+                  <span class="badge bg-info">{{ transaction!.paymentMode }}</span>
+                </div>
+              </div>
+              <!-- Date & Time -->
+              <div class="detail-item">
+                <div class="detail-label">
+                  <i class="bi bi-calendar-event me-2"></i>Date & Time
+                </div>
+                <div class="detail-value">
+                  {{ formatDateTime(transaction!.date) }}
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+        <!-- Additional Information Card -->
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-header">
+              <h5 class="mb-0">Additional Information</h5>
+            </div>
+            <div class="card-body">
+              <!-- Transaction ID -->
+              <div class="detail-item mb-4">
+                <div class="detail-label small">Transaction ID</div>
+                <div class="detail-value small">
+                  #{{ transaction!.id }}
+                </div>
+              </div>
+              <!-- Date -->
+              <div class="detail-item mb-4">
+                <div class="detail-label small">Date</div>
+                <div class="detail-value small">
+                  {{ formatDate(transaction!.date) }}
+                </div>
+              </div>
+              <!-- Notes -->
+              <div class="detail-item">
+                <div class="detail-label small">
+                  <i class="bi bi-sticky me-2"></i>Notes
+                </div>
+                @if (transaction.notes) {
+                  <div class="detail-value small notes-value">
+                    {{ transaction!.notes }}
+                  </div>
+                }
+                @if (!transaction.notes) {
+                  <div class="detail-value small text-muted">
+                    <em>No notes available</em>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  }
 
-    <!-- Loading State -->
-    <div class="loading-state text-center py-5" *ngIf="!transaction">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="text-muted mt-3">Loading transaction details...</p>
+  <!-- Loading State -->
+  @if (!transaction) {
+    <div class="loading-state text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-3">Loading transaction details...</p>
     </div>
+  }
 </div>

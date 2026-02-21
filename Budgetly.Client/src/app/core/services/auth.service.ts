@@ -5,7 +5,7 @@ import { Observable, catchError, map, throwError } from 'rxjs';
 import { JwtToken } from '../models/auth/jwt-token.model';
 import { jwtDecode } from 'jwt-decode';
 import { Login } from '../models/auth/login.model';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 
 @Injectable({

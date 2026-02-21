@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 interface Transaction {
-    id: number;
-    description: string;
-    amount: number;
-    category: string;
-    paymentMode: string;
-    date: Date;
-    notes?: string;
+  id: number;
+  description: string;
+  amount: number;
+  category: string;
+  paymentMode: string;
+  date: Date;
+  notes?: string;
 }
 
 @Component({
   selector: 'app-transaction-details',
+  standalone: true,
+  imports: [],
   templateUrl: './transaction-details.component.html',
   styleUrls: ['./transaction-details.component.scss']
 })

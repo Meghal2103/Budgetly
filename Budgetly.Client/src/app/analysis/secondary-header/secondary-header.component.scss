@@ -37,12 +37,12 @@
     }
 
     ::ng-deep {
-        .p-dropdown,
-        .p-calendar {
+        .p-select,
+        .p-datepicker {
             width: 100%;
         }
 
-        .p-dropdown-label,
+        .p-select-label,
         .p-inputtext {
             font-size: 0.875rem;
         }

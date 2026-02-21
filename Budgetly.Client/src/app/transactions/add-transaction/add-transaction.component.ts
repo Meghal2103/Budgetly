@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ReactiveFormsModule
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { TransactionService } from '../../core/services/transaction.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,6 +17,7 @@ import { TransactionType } from '../../core/models/transaction/transaction-type.
 
 @Component({
   selector: 'app-add-transaction',
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './add-transaction.component.html',
   styleUrls: ['./add-transaction.component.scss']
 })
@@ -194,7 +203,7 @@ export class AddTransactionComponent implements OnInit {
     const amountControl = this.transactionForm.get('amount');
     if (amountControl && amountControl.value) {
       let currentValue = amountControl.value.toString();
-      
+
       if (type === 'cashOut') {
         // Add minus sign if not present
         if (!currentValue.startsWith('-')) {

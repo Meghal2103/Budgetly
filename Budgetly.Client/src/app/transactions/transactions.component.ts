@@ -3,35 +3,37 @@ import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
 import { TransactionDTO } from '../core/models/transaction/transaction.model';
+import { FormsModule } from "@angular/forms";
 
 interface Transaction {
-    id: number;
-    title: string;
-    amount: number;
-    category: string;
-    transactionType: string;
-    date: Date;
-    notes?: string;
+  id: number;
+  title: string;
+  amount: number;
+  category: string;
+  transactionType: string;
+  date: Date;
+  notes?: string;
 }
 
 @Component({
   selector: 'app-transactions',
+  imports: [FormsModule],
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss']
 })
 export class TransactionsComponent implements OnInit {
   analysisTypeId: number | null = null;
-  
+
   // Transaction data
   allTransactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
   isLoading: boolean = false;
   errorMessage: string = '';
-  
+
   // Filter options (UI only - not implemented)
   categories: string[] = ['All Categories'];
   paymentModes: string[] = ['All Payment Types'];
-  
+
   // Filter values (UI only - not implemented)
   selectedCategory: string = 'All Categories';
   selectedPaymentMode: string = 'All Payment Types';

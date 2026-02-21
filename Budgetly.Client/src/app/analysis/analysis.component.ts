@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SidebarService } from '../core/services/sidebar.service';
 import { AnalysisItems } from '../core/enums/analysis-items.enum';
+import {SecondaryHeaderComponent} from "./secondary-header/secondary-header.component";
+import {ChartModule} from "primeng/chart";
 
 interface Transaction {
     id: number;
@@ -14,6 +16,7 @@ interface Transaction {
 
 @Component({
     selector: 'app-analysis',
+    imports: [SecondaryHeaderComponent, ChartModule],
     templateUrl: './analysis.component.html',
     styleUrls: ['./analysis.component.scss']
 })

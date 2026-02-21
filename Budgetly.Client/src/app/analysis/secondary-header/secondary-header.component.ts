@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 
+import { FormsModule } from "@angular/forms";
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+
 @Component({
   selector: 'app-secondary-header',
+  imports: [FormsModule, SelectModule, DatePickerModule],
   templateUrl: './secondary-header.component.html',
   styleUrls: ['./secondary-header.component.scss']
 })

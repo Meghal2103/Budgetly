@@ -1,21 +1,27 @@
 <nav class="navbar navbar-expand-md  border-bottom shadow-sm" style="background-color: #F5F7FA;">
-    <div class="container-fluid px-5">
-        <a class="navbar-brand text-primary fw-bold fs-4">Budgetly</a>
+  <div class="container-fluid px-5">
+    <a class="navbar-brand text-primary fw-bold fs-4">Budgetly</a>
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link text-secondary" routerLink="/auth/login" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Login</a>
-                </li>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item">
+          @if (!(authService.isLoggedIn)) {
+            <a class="nav-link text-secondary" routerLink="/auth/login" routerLinkActive="active">Login</a>
+          }
+        </li>
 
-                <li class="nav-item">
-                    <a class="nav-link text-secondary" routerLink="/auth/sign-up" routerLinkActive="active" *ngIf="!(authService.isLoggedIn)">Register</a>
-                </li>
+        <li class="nav-item">
+          @if (!(authService.isLoggedIn)) {
+            <a class="nav-link text-secondary" routerLink="/auth/sign-up" routerLinkActive="active">Register</a>
+          }
+        </li>
 
-                <li class="nav-item ms-2" *ngIf="authService.isLoggedIn">
-                    <button class="btn btn-danger" (click)="authService.logout()">Logout</button>
-                </li>
-            </ul>
-        </div>
+        @if (authService.isLoggedIn) {
+          <li class="nav-item ms-2">
+            <button class="btn btn-danger" (click)="authService.logout()">Logout</button>
+          </li>
+        }
+      </ul>
     </div>
+  </div>
 </nav>

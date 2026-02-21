@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router';
+import { ChartModule } from "primeng/chart";
 
 interface Transaction {
-    id: number;
-    description: string;
-    amount: number;
-    category: string;
-    paymentMode: string;
-    date: Date;
+  id: number;
+  description: string;
+  amount: number;
+  category: string;
+  paymentMode: string;
+  date: Date;
 }
 
 @Component({
   selector: 'app-dashboard',
+  imports: [ChartModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -29,7 +32,7 @@ export class DashboardComponent implements OnInit {
   // Chart data
   monthlySpendingChartData: any = { labels: [], datasets: [] };
   categoryChartData: any = { labels: [], datasets: [] };
-  
+
   chartOptions: any = {};
   pieChartOptions: any = {};
 
@@ -60,7 +63,7 @@ export class DashboardComponent implements OnInit {
     for (let i = 0; i < 30; i++) {
       const daysAgo = Math.floor(Math.random() * 30);
       const date = new Date(currentYear, currentMonth, today.getDate() - daysAgo);
-      
+
       if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
         transactions.push({
           id: i + 1,
@@ -98,7 +101,7 @@ export class DashboardComponent implements OnInit {
     // Monthly spending trend (last 6 months)
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     const monthlyData = months.map(() => Math.floor(Math.random() * 30000) + 20000);
-    
+
     this.monthlySpendingChartData = {
       labels: months,
       datasets: [
@@ -133,7 +136,7 @@ export class DashboardComponent implements OnInit {
         {
           data: Object.values(categoryTotals),
           backgroundColor: [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
             '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
           ]
         }

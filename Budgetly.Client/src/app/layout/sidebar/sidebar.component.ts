@@ -1,8 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { SidebarService } from 'src/app/core/services/sidebar.service';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { SidebarService } from '../../core/services/sidebar.service';
 
 @Component({
     selector: 'app-sidebar',
+    imports: [CommonModule, RouterModule],
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss']
 })

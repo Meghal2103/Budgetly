@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, throwError, map } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { TransactionType } from '../models/transaction/transaction-type.model';
 import { CategoryOption } from '../models/transaction/category.model';

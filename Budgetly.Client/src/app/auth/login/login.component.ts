@@ -1,10 +1,12 @@
 import { Component, inject, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { Login } from 'src/app/core/models/auth/login.model';
-import { AuthService } from 'src/app/core/services/auth.service';
+
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { Login } from '../../core/models/auth/login.model';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-login',
+    imports: [ReactiveFormsModule, FormsModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
