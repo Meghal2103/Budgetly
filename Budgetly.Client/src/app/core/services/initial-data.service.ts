@@ -1,20 +1,11 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, catchError, throwError, map } from 'rxjs';
+import {Observable, catchError, throwError, map, retry, firstValueFrom} from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { TransactionType } from '../models/transaction/transaction-type.model';
 import { CategoryOption } from '../models/transaction/category.model';
-
-interface TransactionTypeAPI {
-    transactionTypeID: number;
-    transactionTypeName: string;
-}
-
-interface CategoryAPI {
-    categoryId: number;
-    categoryName: string;
-}
+import {api} from "../enums/api.enum";
 
 @Injectable({
     providedIn: 'root'
@@ -23,144 +14,85 @@ export class InitialDataService {
     private http: HttpClient = inject(HttpClient);
     private transactionTypes: TransactionType[] = [];
     private categories: CategoryOption[] = [];
-    private isTransactionTypesLoading: boolean = false;
     private isTransactionTypesLoaded: boolean = false;
-    private isCategoriesLoading: boolean = false;
     private isCategoriesLoaded: boolean = false;
 
-    /**
-     * Load transaction types from API and cache them
-     * Should be called once when app initializes
-     */
+    initializeAppData(): Promise<void> {
+        return Promise.all([
+            firstValueFrom(this.loadCategories()),
+            firstValueFrom(this.loadTransactionTypes())
+        ]).then(() => {});
+    }
+
     loadTransactionTypes(): Observable<TransactionType[]> {
-        if (this.isTransactionTypesLoaded) {
-            // Return cached data as observable
-            return new Observable(observer => {
-                observer.next(this.transactionTypes);
-                observer.complete();
-            });
-        }
+        const url = `${environment.baseUrl}/${api.getTransactionType}`;
 
-        if (this.isTransactionTypesLoading) {
-            // If already loading, wait and return the cached result
-            return new Observable(observer => {
-                const checkInterval = setInterval(() => {
-                    if (this.isTransactionTypesLoaded) {
-                        clearInterval(checkInterval);
-                        observer.next(this.transactionTypes);
-                        observer.complete();
-                    }
-                }, 100);
-            });
-        }
-
-        this.isTransactionTypesLoading = true;
-        const url = `${environment.baseUrl}/api/Transaction/get-transaction-type`;
-
-        return this.http.get<APIResponse<TransactionTypeAPI[]>>(url).pipe(
-            map((response: APIResponse<TransactionTypeAPI[]>) => {
-                if (response.success && response.data) {
-                    // Map API response to client model
-                    this.transactionTypes = response.data.map(apiType => ({
-                        id: apiType.transactionTypeID,
-                        name: apiType.transactionTypeName
-                    }));
-                    this.isTransactionTypesLoaded = true;
-                    this.isTransactionTypesLoading = false;
-                    return this.transactionTypes;
+        return this.http.get<APIResponse<TransactionType[]>>(url).pipe(
+            map((response: APIResponse<TransactionType[]>) => {
+                if (!response.success || !response.data) {
+                    throw new Error(response.message || 'Invalid transaction types response');
                 }
-                this.isTransactionTypesLoading = false;
-                return [];
+
+                this.transactionTypes = response.data.map(apiType => ({
+                    transactionTypeID: apiType.transactionTypeID,
+                    transactionTypeName: apiType.transactionTypeName
+                }));
+                this.isTransactionTypesLoaded = true;
+                return this.transactionTypes;
+            }),
+            retry({
+                count: 3,
+                delay: 1000
             }),
             catchError((errorResponse: HttpErrorResponse) => {
-                this.isTransactionTypesLoading = false;
-                const apiError: APIResponse<TransactionTypeAPI[]> = errorResponse.error;
+                const apiError: APIResponse<TransactionType[]> = errorResponse.error;
                 const errorMessage = apiError?.message || 'An error occurred while fetching transaction types';
                 return throwError(() => new Error(errorMessage));
             })
         );
     }
 
-    /**
-     * Get cached transaction types
-     * Returns empty array if not loaded yet
-     */
     getTransactionTypes(): TransactionType[] {
         return this.transactionTypes;
     }
 
-    /**
-     * Check if transaction types are loaded
-     */
-    areTransactionTypesLoaded(): boolean {
+    get areTransactionTypesLoaded(): boolean {
         return this.isTransactionTypesLoaded;
     }
 
-    /**
-     * Load categories from API and cache them
-     * Should be called once when app initializes
-     */
     loadCategories(): Observable<CategoryOption[]> {
-        if (this.isCategoriesLoaded) {
-            // Return cached data as observable
-            return new Observable(observer => {
-                observer.next(this.categories);
-                observer.complete();
-            });
-        }
+        const url = `${environment.baseUrl}/${api.getCategories}`;
 
-        if (this.isCategoriesLoading) {
-            // If already loading, wait and return the cached result
-            return new Observable(observer => {
-                const checkInterval = setInterval(() => {
-                    if (this.isCategoriesLoaded) {
-                        clearInterval(checkInterval);
-                        observer.next(this.categories);
-                        observer.complete();
-                    }
-                }, 100);
-            });
-        }
-
-        this.isCategoriesLoading = true;
-        const url = `${environment.baseUrl}/api/Transaction/get-categories`;
-
-        return this.http.get<APIResponse<CategoryAPI[]>>(url).pipe(
-            map((response: APIResponse<CategoryAPI[]>) => {
-                if (response.success && response.data) {
-                    // Map API response to client model
-                    this.categories = response.data.map(apiCategory => ({
-                        id: apiCategory.categoryId,
-                        name: apiCategory.categoryName
-                    }));
-                    this.isCategoriesLoaded = true;
-                    this.isCategoriesLoading = false;
-                    return this.categories;
+        return this.http.get<APIResponse<CategoryOption[]>>(url).pipe(
+            map((response: APIResponse<CategoryOption[]>) => {
+                if (!response.success || !response.data) {
+                    throw new Error(response.message || 'Invalid categories response');
                 }
-                this.isCategoriesLoading = false;
-                return [];
+
+                this.categories = response.data.map(apiCategory => ({
+                    categoryId: apiCategory.categoryId,
+                    categoryName: apiCategory.categoryName
+                }));
+                this.isCategoriesLoaded = true;
+                return this.categories;
+            }),
+            retry({
+                count: 3,
+                delay: 1000
             }),
             catchError((errorResponse: HttpErrorResponse) => {
-                this.isCategoriesLoading = false;
-                const apiError: APIResponse<CategoryAPI[]> = errorResponse.error;
+                const apiError: APIResponse<CategoryOption[]> = errorResponse.error;
                 const errorMessage = apiError?.message || 'An error occurred while fetching categories';
                 return throwError(() => new Error(errorMessage));
             })
         );
     }
 
-    /**
-     * Get cached categories
-     * Returns empty array if not loaded yet
-     */
     getCategories(): CategoryOption[] {
         return this.categories;
     }
 
-    /**
-     * Check if categories are loaded
-     */
-    areCategoriesLoaded(): boolean {
+    get areCategoriesLoaded(): boolean {
         return this.isCategoriesLoaded;
     }
 }
