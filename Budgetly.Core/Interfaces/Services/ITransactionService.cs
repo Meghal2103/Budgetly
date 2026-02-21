@@ -9,6 +9,6 @@ namespace Budgetly.Core.Interfaces.Services
         Task<TransactionViewModel> AddTransaction(AddEditTransaction addEditTransaction);
         Task<List<TransactionType>> GetTransactionType();
         Task<List<Category>> GetCategories();
-        Task<List<TransactionViewModel>> GetTransactions();
+        Task<TransactionsDTO> GetTransactions();
     }
 }

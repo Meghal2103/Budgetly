@@ -30,9 +30,9 @@ namespace Budgetly.Infrastructure.Repositories
             return await dbContext.Categories.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<Transaction>> GetTransactions()
+        public async Task<(int, List<Transaction>)> GetTransactions()
         {
-            return await dbContext.Transactions.AsNoTracking().ToListAsync();
+            return (await dbContext.Transactions.CountAsync(), await dbContext.Transactions.AsNoTracking().ToListAsync());
         }
     }
 }

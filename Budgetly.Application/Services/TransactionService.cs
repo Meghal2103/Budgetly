@@ -26,11 +26,16 @@ namespace Budgetly.Application.Services
             return await transactionRepository.GetCategories();
         }
 
-        public async Task<List<TransactionViewModel>> GetTransactions()
+        public async Task<TransactionsDTO> GetTransactions()
         {
-            var transactions =  mapper.Map<List<TransactionViewModel>>(await transactionRepository.GetTransactions());
+            TransactionsDTO transactionsDTO = new();
+            var (count, transactions) = await transactionRepository.GetTransactions();
+            transactionsDTO.TotalCount = count;
+            transactionsDTO.Transactions =  mapper.Map<List<TransactionViewModel>>(transactions);
+            transactionsDTO.PageSize = count;
+            transactionsDTO.CurrentPage = 1;
 
-            return transactions;
+            return transactionsDTO;
         }
     }
 }

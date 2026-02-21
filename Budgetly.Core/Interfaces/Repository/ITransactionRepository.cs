@@ -8,6 +8,6 @@ namespace Budgetly.Core.Interfaces.Repository
         Task<Transaction> AddTransactionAsync(Transaction user);
         public Task<List<TransactionType>> GetTransactionType();
         public Task<List<Category>> GetCategories();
-        public Task<List<Transaction>> GetTransactions();
+        public Task<(int count, List<Transaction>)> GetTransactions();
     }
 }

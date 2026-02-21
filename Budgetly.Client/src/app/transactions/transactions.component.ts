@@ -2,11 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
-import { TransactionDTO, Transaction, TransactionSearchDTO } from '../core/models/transaction/transaction.model';
+import { TransactionDTO, Transaction, TransactionSearchDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
 import { PAGE_CONFIG } from '../core/config/page.config';
+import { APIResponse } from '../core/models/api-response.model';
+import { last } from 'rxjs';
 
 @Component({
     selector: 'app-transactions',
@@ -64,9 +66,12 @@ export class TransactionsComponent implements OnInit {
         this.errorMessage = '';
 
         this.transactionService.getTransactions().subscribe({
-            next: (response) => {
+            next: (response: APIResponse<TransactionsDTO>) => {
                 if (response.success && response.data) {
-                    this.allTransactions = this.mapTransactions(response.data);
+                    this.allTransactions = this.mapTransactions(response.data.transactions);
+                    this.totalCount = response.data.totalCount;
+                    this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
+                    this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
                 } else {
                     this.errorMessage = response.message || 'Failed to load transactions';
                 }
@@ -154,8 +159,13 @@ export class TransactionsComponent implements OnInit {
         }).format(date);
     }
 
-    getPageNumbers(): number[] {
+    getLastPage(): number {
         const pageSize = this.paginationForm.get('pageSize')?.value ?? PAGE_CONFIG.DEFAULT_PAGE_SIZE;
-        return Array.from({ length: Math.max(1, Math.ceil(this.totalCount / pageSize)) }, (_, index) => index + 1);
+        return Math.max(1, Math.ceil(this.totalCount / pageSize));
+    }
+
+    getPageNumbers(): number[] {
+        const lastPage = this.getLastPage();
+        return Array.from({ length: lastPage }, (_, index) => index + 1);
     }
 }

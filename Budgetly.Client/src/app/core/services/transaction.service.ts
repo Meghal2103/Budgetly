@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
-import { AddTransactionRequest, TransactionDTO } from '../models/transaction/transaction.model';
+import { AddTransactionRequest, TransactionDTO, TransactionsDTO } from '../models/transaction/transaction.model';
 import { api } from '../enums/api.enum';
 
 @Injectable({
@@ -24,12 +24,12 @@ export class TransactionService {
         );
     }
 
-    getTransactions(): Observable<APIResponse<TransactionDTO[]>> {
+    getTransactions(): Observable<APIResponse<TransactionsDTO>> {
         const url = `${environment.baseUrl}/${api.getTransaction}`;
 
-        return this.http.get<APIResponse<TransactionDTO[]>>(url).pipe(
+        return this.http.get<APIResponse<TransactionsDTO>>(url).pipe(
             catchError((errorResponse: HttpErrorResponse) => {
-                const apiError: APIResponse<TransactionDTO[]> = errorResponse.error;
+                const apiError: APIResponse<TransactionsDTO> = errorResponse.error;
                 const errorMessage = apiError?.message || 'An error occurred while fetching transactions';
                 return throwError(() => new Error(errorMessage));
             })
