@@ -10,6 +10,8 @@ import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
 import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
 import { SlicePipe } from '@angular/common';
+import { SidebarService } from '../core/services/sidebar.service';
+import { SIDEBAR_ITEMS } from '../core/config/sidebar.config';
 
 @Component({
     selector: 'app-transactions',
@@ -22,6 +24,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
+    private sidebarService = inject(SidebarService);
     private destroy$ = new Subject<void>();
     private totalCount: number = 0;
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
@@ -83,6 +86,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.sidebarService.activateElement(SIDEBAR_ITEMS[0]);
         this.searchForm.valueChanges
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {

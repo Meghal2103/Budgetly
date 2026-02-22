@@ -1,6 +1,4 @@
 # Sidebar
-## 1. remove description
-## 2. correct activation logic
 ## 3. login activation
 
 # Add transaction

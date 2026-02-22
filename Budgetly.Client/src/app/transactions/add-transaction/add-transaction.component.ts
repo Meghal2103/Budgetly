@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -15,6 +15,8 @@ import { InitialDataService } from '../../core/services/initial-data.service';
 import { CategoryOption } from '../../core/models/transaction/category.model'
 import { TransactionType } from '../../core/models/transaction/transaction-type.model'
 import { routes } from '../../core/enums/route.enum';
+import { SIDEBAR_ITEMS } from '../../core/config/sidebar.config';
+import { SidebarService } from '../../core/services/sidebar.service';
 
 @Component({
   selector: 'app-add-transaction',
@@ -23,6 +25,7 @@ import { routes } from '../../core/enums/route.enum';
   styleUrls: ['./add-transaction.component.scss']
 })
 export class AddTransactionComponent implements OnInit {
+  private sidebarService = inject(SidebarService);
   transactionForm!: FormGroup;
   isLoading: boolean = false;
   errorMessage: string = '';
@@ -40,6 +43,7 @@ export class AddTransactionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.sidebarService.activateElement(SIDEBAR_ITEMS[1]);
     this.initializeForm();
     this.loadTransactionTypes();
     this.loadCategories();

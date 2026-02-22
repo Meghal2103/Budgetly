@@ -53,14 +53,14 @@ export class AnalysisComponent implements OnInit {
         const categories = ['Food & Dining', 'Transportation', 'Shopping', 'Bills & Utilities', 'Entertainment', 'Healthcare', 'Education', 'Travel'];
         const paymentModes = ['Credit Card', 'Debit Card', 'Cash', 'UPI', 'Bank Transfer'];
         
-        const currentPeriod = this.sidebarService.activeItem;
-        const daysInPeriod = this.getDaysInPeriod(currentPeriod);
+        // const currentPeriod = this.sidebarService.activeItem;
+        // const daysInPeriod = this.getDaysInPeriod(currentPeriod);
         
         // Generate transactions for current period
         for (let i = 0; i < 20; i++) {
-            const daysAgo = Math.floor(Math.random() * daysInPeriod);
+            // const daysAgo = Math.floor(Math.random() * daysInPeriod);
             const date = new Date();
-            date.setDate(date.getDate() - daysAgo);
+            // date.setDate(date.getDate() - daysAgo);
             
             this.transactions.push({
                 id: i + 1,
@@ -144,27 +144,27 @@ export class AnalysisComponent implements OnInit {
         };
 
         // Period comparison line chart
-        const currentPeriod = this.sidebarService.activeItem;
-        const comparisonData = this.generatePeriodComparisonData(currentPeriod);
-        this.periodComparisonChartData = {
-            labels: comparisonData.labels,
-            datasets: [
-                {
-                    label: 'Current Period',
-                    data: comparisonData.current,
-                    fill: false,
-                    borderColor: '#36A2EB',
-                    tension: 0.4
-                },
-                {
-                    label: 'Previous Period',
-                    data: comparisonData.previous,
-                    fill: false,
-                    borderColor: '#FF6384',
-                    tension: 0.4
-                }
-            ]
-        };
+        // const currentPeriod = this.sidebarService.activeItem;
+        // const comparisonData = this.generatePeriodComparisonData(currentPeriod);
+        // this.periodComparisonChartData = {
+        //     labels: comparisonData.labels,
+        //     datasets: [
+        //         {
+        //             label: 'Current Period',
+        //             data: comparisonData.current,
+        //             fill: false,
+        //             borderColor: '#36A2EB',
+        //             tension: 0.4
+        //         },
+        //         {
+        //             label: 'Previous Period',
+        //             data: comparisonData.previous,
+        //             fill: false,
+        //             borderColor: '#FF6384',
+        //             tension: 0.4
+        //         }
+        //     ]
+        // };
 
         // Options for line chart (keep axes)
         this.chartOptions = {
@@ -262,9 +262,9 @@ export class AnalysisComponent implements OnInit {
         return { labels, current, previous };
     }
 
-    public getPeriodLabel(): string {
-        return this.sidebarService.activeItem;
-    }
+    // public getPeriodLabel(): string {
+    //     // return this.sidebarService.activeItem;
+    // }
 
     public formatCurrency(amount: number): string {
         return new Intl.NumberFormat('en-IN', {
