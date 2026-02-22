@@ -10,6 +10,6 @@ namespace Budgetly.Core.Interfaces.Repository
         public Task<List<TransactionType>> GetTransactionType();
         public Task<List<Category>> GetCategories();
         public Task<(int count, List<Transaction>)> GetTransactions(int userId);
-        public Task<(int count, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId);
+        public Task<(int count, decimal pageBalance, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId);
     }
 }

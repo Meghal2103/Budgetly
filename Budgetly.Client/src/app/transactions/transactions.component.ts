@@ -9,10 +9,11 @@ import { TransactionType } from '../core/models/transaction/transaction-type.mod
 import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
 import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
+import { SlicePipe } from '@angular/common';
 
 @Component({
     selector: 'app-transactions',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, SlicePipe],
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.scss']
 })

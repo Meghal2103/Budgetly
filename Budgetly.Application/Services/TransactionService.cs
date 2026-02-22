@@ -7,15 +7,14 @@ using Budgetly.Core.ViewModel;
 
 namespace Budgetly.Application.Services
 {
-    internal class TransactionService(
-        ITransactionRepository transactionRepository,
-        IMapper mapper,
-        ICurrentUserService currentUserService
-    ) : ITransactionService
+    internal class TransactionService(ITransactionRepository transactionRepository, IMapper mapper, ICurrentUserService currentUserService, IUserRepository userRepository) : ITransactionService
     {
         public async Task<TransactionViewModel> AddTransaction(AddEditTransaction addEditTransaction)
         {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
             var transaction = mapper.Map<Transaction>(addEditTransaction);
+            transaction.UserId = userId;
             await transactionRepository.AddTransactionAsync(transaction);
             return mapper.Map<TransactionViewModel>(transaction);
         }
@@ -49,7 +48,7 @@ namespace Budgetly.Application.Services
             var userId = currentUserService.UserId
                 ?? throw new UnauthorizedAccessException("User not authenticated.");
             TransactionsDTO transactionsDTO = new();
-            var (count, transactions) = await transactionRepository.RequestTransactions(transactionsRequestDTO, userId);
+            var (count, pageBalance, transactions) = await transactionRepository.RequestTransactions(transactionsRequestDTO, userId);
 
             var pageSize = transactionsRequestDTO.PageSize;
             var pageNumber = transactionsRequestDTO.PageNumber;
@@ -58,6 +57,8 @@ namespace Budgetly.Application.Services
             transactionsDTO.Transactions = mapper.Map<List<TransactionViewModel>>(transactions);
             transactionsDTO.PageSize = pageSize == 0 ? count : pageSize;
             transactionsDTO.CurrentPage = pageNumber;
+            transactionsDTO.PageBalance = pageBalance;
+            transactionsDTO.NetBalance = await userRepository.GetUserBalanceByIDAsync(userId);
 
             return transactionsDTO;
         }

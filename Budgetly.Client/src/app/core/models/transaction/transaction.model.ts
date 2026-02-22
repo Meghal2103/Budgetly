@@ -11,7 +11,6 @@ export interface TransactionDTO {
 
 export interface AddTransactionRequest {
     title: string;
-    userId: number;
     categoryId: number;
     transactionTypeID: number;
     dateTime: string;

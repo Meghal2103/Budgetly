@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { routes } from '../../core/enums/route.enum';
 
 interface Transaction {
   id: number;
@@ -65,7 +66,7 @@ export class TransactionDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/transactions']);
+    this.router.navigate([routes.viewTransactions]);
   }
 
   onEdit(): void {
@@ -78,7 +79,7 @@ export class TransactionDetailsComponent implements OnInit {
       // TODO: Call API to delete transaction
       console.log('Deleting transaction:', this.transactionId);
       alert('Transaction deleted successfully!');
-      this.router.navigate(['/transactions']);
+      this.router.navigate([routes.viewTransactions]);
     }
   }
 

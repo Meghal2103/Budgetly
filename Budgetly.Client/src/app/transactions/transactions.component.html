@@ -124,12 +124,12 @@
                                         <td>
                                             <span class="badge bg-secondary">{{ transaction.category }}</span>
                                         </td>
-                                <td>
+                                    <td>
                                     @if (transaction.notes) {
-                                    <span class="text-muted small">
-                                        <i class="bi bi-sticky"></i>
-                                        {{ transaction.notes.length > 40 ? (transaction.notes | slice:0:40) + '...' : transaction.notes }}
-                                    </span>
+                                        <span class="text-muted small">
+                                            <i class="bi bi-sticky"></i>
+                                            {{ transaction.notes.length > 40 ? (transaction.notes | slice:0:40) + '...' : transaction.notes }}
+                                        </span>
                                     }
                                     @if (!transaction.notes) {
                                     <span class="text-muted">-</span>

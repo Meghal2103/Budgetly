@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { ChartModule } from "primeng/chart";
+import { routes } from '../../../core/enums/route.enum';
 
 interface Transaction {
   id: number;
@@ -186,7 +187,7 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateToTransactions(): void {
-    this.router.navigate(['/transactions']);
+    this.router.navigate([routes.viewTransactions]);
   }
 
   navigateToAnalysis(): void {

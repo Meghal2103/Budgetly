@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Budgetly.Infrastructure.Repositories
 {
-    internal class TransactionRepository(AppDbContext dbContext) : ITransactionRepository
+    internal class TransactionRepository(AppDbContext dbContext, IUserRepository userRepository) : ITransactionRepository
     {
         public async Task<Transaction?> GetByTransactionAsync(int TransactionId)
         {
@@ -14,7 +14,7 @@ namespace Budgetly.Infrastructure.Repositories
 
         public async Task<Transaction> AddTransactionAsync(Transaction transaction)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == transaction.UserId);
+            var user = await userRepository.GetUserByIDAsync(transaction.UserId);
             user.Balance += transaction.Amount;
             await dbContext.Transactions.AddAsync(transaction);
             await dbContext.SaveChangesAsync();
@@ -36,7 +36,7 @@ namespace Budgetly.Infrastructure.Repositories
             return (await dbContext.Transactions.CountAsync(t => t.UserId == userId), await dbContext.Transactions.Where(t => t.UserId == userId).AsNoTracking().ToListAsync());
         }
 
-        public async Task<(int count, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId)
+        public async Task<(int count, decimal pageBalance, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId)
         {
             var searchText = transactionsRequestDTO.SearchText?.Trim();
             var query = dbContext.Transactions.Where(t => t.UserId == userId 
@@ -56,7 +56,9 @@ namespace Budgetly.Infrastructure.Repositories
                             .Take(pageSize);
 
             var transactions = await query.ToListAsync();
-            return (totalCount, transactions);
+            var pageBalance = transactions.Sum(t => t.Amount);
+
+            return (totalCount, pageBalance, transactions);
         }
     }
 }
