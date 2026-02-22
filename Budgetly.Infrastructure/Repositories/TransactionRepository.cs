@@ -39,13 +39,16 @@ namespace Budgetly.Infrastructure.Repositories
         public async Task<(int count, decimal pageBalance, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId)
         {
             var searchText = transactionsRequestDTO.SearchText?.Trim();
+            DateTime? startDate = transactionsRequestDTO.StartDate?.ToDateTime(TimeOnly.MinValue);
+            DateTime? endDate = transactionsRequestDTO.EndDate?.ToDateTime(TimeOnly.MaxValue);
+
             var query = dbContext.Transactions.Where(t => t.UserId == userId 
                                     && (string.IsNullOrWhiteSpace(searchText) || t.Title.Contains(searchText) || t.Notes.Contains(searchText))
                                     && (transactionsRequestDTO.CategoryId == 0 || t.CategoryId == transactionsRequestDTO.CategoryId)
                                     && (transactionsRequestDTO.TransactionTypeID == 0 || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID)
-                                    && (!transactionsRequestDTO.StartDate.HasValue || t.DateTime.Date >= transactionsRequestDTO.StartDate.Value)
-                                    && (!transactionsRequestDTO.EndDate.HasValue || t.DateTime <= transactionsRequestDTO.EndDate.Value)
-                                    ).AsNoTracking().AsQueryable();
+                                    && (!startDate.HasValue || t.DateTime >= startDate)
+                                    && (!endDate.HasValue || t.DateTime <= endDate))
+                                    .AsNoTracking().AsQueryable();
 
             var totalCount = await query.CountAsync();
             var pageSize = transactionsRequestDTO.PageSize;

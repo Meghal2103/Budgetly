@@ -25,8 +25,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
     private totalCount: number = 0;
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
-    netBalance = signal(-12500);
-    pageBalance = signal(3200);
+    netBalance = signal(0);
+    pageBalance = signal(0);
 
     // Transaction data
     allTransactions: Transaction[] = [];
@@ -150,6 +150,31 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     addTransaction(): void {
         this.router.navigate(['/transactions/add-transaction']);
+    }
+
+    goToPage(page: number): void {
+        if (page < 1 || page > this.getLastPage()) {
+            return;
+        }
+        this.paginationForm.patchValue({ pageNumber: page });
+    }
+
+    goToFirstPage(): void {
+        this.goToPage(1);
+    }
+
+    goToPreviousPage(): void {
+        const current = this.paginationForm.get('pageNumber')?.value ?? 1;
+        this.goToPage(current - 1);
+    }
+
+    goToNextPage(): void {
+        const current = this.paginationForm.get('pageNumber')?.value ?? 1;
+        this.goToPage(current + 1);
+    }
+
+    goToLastPage(): void {
+        this.goToPage(this.getLastPage());
     }
 
     downloadFilteredTransactions(): void {
