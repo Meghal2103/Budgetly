@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Login } from '../models/auth/login.model';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
+import { routes } from '../enums/route.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -77,7 +78,7 @@ export class AuthService {
                 const token: string | null = response.token;
                 if (token) {
                     this.decodeToken(token);
-                    this.router.navigateByUrl('/dashboard');
+                    this.router.navigate([routes.viewTransactions]);
                     return response.message || 'Login successful';
                 }
                 throw new Error('No token received');

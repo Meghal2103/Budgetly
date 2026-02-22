@@ -6,7 +6,7 @@ import { loggedInRedirectGuard } from '../core/guards/logged-in-redirect.guard';
 import { PageNotFoundComponent } from '../shared/components/page-not-found/page-not-found.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 
-export const routes: Routes = [
+export const authRoutes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent, canActivate: [loggedInRedirectGuard] },
     { path: 'sign-up', component: SignUpComponent, canActivate: [loggedInRedirectGuard] },

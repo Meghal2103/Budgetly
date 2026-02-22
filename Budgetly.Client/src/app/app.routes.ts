@@ -3,6 +3,7 @@ import {LayoutComponent} from "./layout/layout.component";
 import {loggedInGuard} from "./core/guards/logged-in.guard";
 import {DashboardComponent} from "./shared/components/dashboard/dashboard.component";
 import {PageNotFoundComponent} from "./shared/components/page-not-found/page-not-found.component";
+import { authRoutes } from "./auth/auth-routing.routes";
 
 export const routes: Routes = [
     {
@@ -15,6 +16,6 @@ export const routes: Routes = [
             { path: 'analysis', loadChildren: () => import('./analysis/analysis.routes').then(a => a.routes )}
         ]
     },
-    { path: 'auth', loadChildren: () => import('./auth/auth-routing.routes').then(m => m.routes) },
+    { path: 'auth', children: authRoutes },
     { path: '**', component: PageNotFoundComponent}
 ];

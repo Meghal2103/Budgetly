@@ -1,12 +1,12 @@
 import { Component, inject, ViewChild } from '@angular/core';
-
+import { RouterModule } from '@angular/router';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Login } from '../../core/models/auth/login.model';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, FormsModule],
+    imports: [ReactiveFormsModule, FormsModule, RouterModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
