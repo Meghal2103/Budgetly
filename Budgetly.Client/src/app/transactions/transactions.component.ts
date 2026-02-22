@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
@@ -8,7 +8,7 @@ import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
 import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
-import { switchMap, take } from 'rxjs';
+import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-transactions',
@@ -16,19 +16,18 @@ import { switchMap, take } from 'rxjs';
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.scss']
 })
-export class TransactionsComponent implements OnInit {
+export class TransactionsComponent implements OnInit, OnDestroy {
     private transactionService = inject(TransactionService);
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
     private lastApiCallId = 0;
+    private destroy$ = new Subject<void>();
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
-
-    totalCount = 1// Placeholder, should be set from API response
+    totalCount: number = 0;
 
     // Transaction data
     allTransactions: Transaction[] = [];
-    filteredTransactions: Transaction[] = [];
     isLoading = signal(true);
     errorMessage: string = '';
 
@@ -56,12 +55,6 @@ export class TransactionsComponent implements OnInit {
         pageNumber: 1
     };
 
-    ngOnInit(): void {
-        this.searchForm.valueChanges.subscribe(() => this.loadTransactions());
-        this.paginationForm.valueChanges.subscribe(() => this.loadTransactions());
-        this.loadTransactions();
-    }
-
     private buildPayload(): void {
         const formValue = this.searchForm.getRawValue();
         const paginationValue = this.paginationForm.getRawValue();
@@ -69,9 +62,9 @@ export class TransactionsComponent implements OnInit {
         const endDate = this.parseDateInput(formValue.endDate);
 
         this.transactionsRequestDTO = {
-            searchText: formValue.searchText.trim(),
-            categoryId: formValue.categoryId === 0 ? null : formValue.categoryId,
-            transactionTypeID: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
+            searchText: formValue.searchText.trim() ?? '',
+            categoryId: formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId,
             startDate,
             endDate,
             pageSize: paginationValue.pageSize,
@@ -87,37 +80,41 @@ export class TransactionsComponent implements OnInit {
         return new Date(year, month - 1, day);
     }
 
-    private loadTransactions(): void {
-        this.errorMessage = '';
-        this.isLoading.set(true);
-        const currentApiCallId = ++this.lastApiCallId;
-        this.buildPayload();
-
-        this.transactionService.getTransactions(this.transactionsRequestDTO).pipe(
-            take(1),
-            switchMap(res => {
-                if (currentApiCallId === this.lastApiCallId) {
-                    return [res];
+    ngOnInit(): void {
+        combineLatest([
+            this.searchForm.valueChanges.pipe(startWith(this.searchForm.getRawValue())),
+            this.paginationForm.valueChanges.pipe(startWith(this.paginationForm.getRawValue()))
+        ]).pipe(
+            debounceTime(300),
+            switchMap(() => {
+                this.buildPayload();
+                this.isLoading.set(true);
+                return this.transactionService.getTransactions(this.transactionsRequestDTO);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: (response: APIResponse<TransactionsDTO>) => {
+                if (response.success && response.data) {
+                    this.allTransactions = this.mapTransactions(response.data.transactions);
+                    this.totalCount = response.data.totalCount;
+                    this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
+                    this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
+                    this.ensurePageSizeOption(response.data.pageSize);
+                } else {
+                    this.errorMessage = response.message || 'Failed to load transactions';
                 }
-                return [];
-            })).subscribe({
-                next: (response: APIResponse<TransactionsDTO>) => {
-                    if (response.success && response.data) {
-                        this.allTransactions = this.mapTransactions(response.data.transactions);
-                        this.totalCount = response.data.totalCount;
-                        this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
-                        this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
-                        this.ensurePageSizeOption(response.data.pageSize);
-                    } else {
-                        this.errorMessage = response.message || 'Failed to load transactions';
-                    }
-                    this.isLoading.set(false);
-                },
-                error: (error) => {
-                    this.errorMessage = error.message || 'An error occurred while loading transactions';
-                    this.isLoading.set(false);
-                }
+                this.isLoading.set(false);
+            },
+            error: (error) => {
+                this.errorMessage = error.message || 'An error occurred while loading transactions';
+                this.isLoading.set(false);
+            }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
