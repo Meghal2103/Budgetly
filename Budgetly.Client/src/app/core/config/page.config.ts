@@ -1,0 +1,4 @@
+export const PAGE_CONFIG = {
+  DEFAULT_PAGE_SIZE: 25,
+  PAGE_SIZES: [25, 50, 100]
+};

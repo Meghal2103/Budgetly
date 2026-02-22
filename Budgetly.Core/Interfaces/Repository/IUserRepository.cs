@@ -6,6 +6,10 @@ namespace Budgetly.Core.Interfaces.Repository
     {
         Task<User?> GetUserByEmailAsync(string email);
 
+        Task<User?> GetUserByIDAsync(int UserId);
+
+        Task<decimal> GetUserBalanceByIDAsync(int UserId);
+
         Task<User> AddUserAsync(User user);
     }
 }

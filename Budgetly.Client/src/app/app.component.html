@@ -1,2 +1,11 @@
-<app-primary-header></app-primary-header>
-<router-outlet></router-outlet>
+@if (isInitialLoading() && authService.isLoggedIn) {
+  <div class="app-loader" role="status" aria-live="polite">
+    <div class="loader-card">
+      <div class="spinner-border text-primary" role="status" aria-label="Loading"></div>
+      <div class="loader-text">Loading ...</div>
+    </div>
+  </div>
+} @else {
+  <app-primary-header></app-primary-header>
+  <router-outlet></router-outlet>
+}

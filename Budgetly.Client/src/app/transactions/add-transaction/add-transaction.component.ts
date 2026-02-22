@@ -14,6 +14,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { InitialDataService } from '../../core/services/initial-data.service';
 import { CategoryOption } from '../../core/models/transaction/category.model'
 import { TransactionType } from '../../core/models/transaction/transaction-type.model'
+import { routes } from '../../core/enums/route.enum';
 
 @Component({
   selector: 'app-add-transaction',
@@ -129,7 +130,6 @@ export class AddTransactionComponent implements OnInit {
 
       const transactionData = {
         title: formValue.title.trim(),
-        userId: userId,
         categoryId: parseInt(formValue.categoryId, 10),
         transactionTypeID: parseInt(formValue.transactionTypeID, 10),
         dateTime: dateTime,
@@ -140,7 +140,7 @@ export class AddTransactionComponent implements OnInit {
       this.transactionService.addTransaction(transactionData).subscribe({
         next: (response) => {
           if (response.success) {
-            this.router.navigate(['/transactions']);
+            this.router.navigate([routes.viewTransactions]);
           } else {
             this.errorMessage = response.message || 'Failed to add transaction';
             this.isLoading = false;
@@ -160,7 +160,7 @@ export class AddTransactionComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/transactions']);
+    this.router.navigate([routes.viewTransactions]);
   }
 
   getFieldError(fieldName: string): string {

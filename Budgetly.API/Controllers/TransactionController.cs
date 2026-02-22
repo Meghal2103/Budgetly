@@ -34,10 +34,10 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get-transactions")]
+        [HttpGet("get-all-transactions")]
         public async Task<IActionResult> GetTransactions()
         {
-            APIResponse<List<TransactionViewModel>> response = new();
+            APIResponse<TransactionsDTO> response = new();
 
             var transactions = await transactionService.GetTransactions();
             response.Success = true;
@@ -45,6 +45,35 @@ namespace Budgetly.API.Controllers
             response.Data = transactions;
 
             return Ok(response);
+        }
+
+        [HttpPost("get-transactions")]
+        public async Task<IActionResult> GetTransactions([FromBody] TransactionsRequestDTO transactionsRequestDTO)
+        {
+            APIResponse<TransactionsDTO> response = new();
+
+            var transactions = await transactionService.RequestTransactions(transactionsRequestDTO);
+            response.Success = true;
+            response.Message = "Transaction search returned successfully.";
+            response.Data = transactions;
+
+            return Ok(response);
+        }
+
+        [HttpGet("export-all-transactions")]
+        public async Task<IActionResult> ExportAllTransactions()
+        {
+            var content = await transactionService.ExportAllTransactionsExcel();
+            var fileName = $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        [HttpPost("export-transactions")]
+        public async Task<IActionResult> ExportFilteredTransactions([FromBody] TransactionsRequestDTO transactionsRequestDTO)
+        {
+            var content = await transactionService.ExportTransactionsExcel(transactionsRequestDTO);
+            var fileName = $"transactions-filtered-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
         [HttpGet("get-transaction-type")]

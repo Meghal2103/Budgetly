@@ -1,180 +1,265 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
-import { TransactionDTO } from '../core/models/transaction/transaction.model';
-import { FormsModule } from "@angular/forms";
-
-interface Transaction {
-  id: number;
-  title: string;
-  amount: number;
-  category: string;
-  transactionType: string;
-  date: Date;
-  notes?: string;
-}
+import { TransactionDTO, Transaction, TransactionsRequestDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { CategoryOption } from '../core/models/transaction/category.model';
+import { TransactionType } from '../core/models/transaction/transaction-type.model';
+import { PAGE_CONFIG } from '../core/config/page.config';
+import { APIResponse } from '../core/models/api-response.model';
+import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
+import { SlicePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-transactions',
-  imports: [FormsModule],
-  templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.scss']
+    selector: 'app-transactions',
+    imports: [ReactiveFormsModule, SlicePipe],
+    templateUrl: './transactions.component.html',
+    styleUrls: ['./transactions.component.scss']
 })
-export class TransactionsComponent implements OnInit {
-  analysisTypeId: number | null = null;
+export class TransactionsComponent implements OnInit, OnDestroy {
+    private transactionService = inject(TransactionService);
+    private initialDataService = inject(InitialDataService);
+    private router = inject(Router);
+    private formBuilder = inject(FormBuilder);
+    private destroy$ = new Subject<void>();
+    private totalCount: number = 0;
+    pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
+    netBalance = signal(0);
+    pageBalance = signal(0);
 
-  // Transaction data
-  allTransactions: Transaction[] = [];
-  filteredTransactions: Transaction[] = [];
-  isLoading: boolean = false;
-  errorMessage: string = '';
+    // Transaction data
+    allTransactions: Transaction[] = [];
+    isLoading = signal(true);
+    errorMessage: string = '';
 
-  // Filter options (UI only - not implemented)
-  categories: string[] = ['All Categories'];
-  paymentModes: string[] = ['All Payment Types'];
+    categories: CategoryOption[] = this.initialDataService.getCategories();
+    transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
+    searchForm: FormGroup = this.formBuilder.group({
+        searchText: [''],
+        categoryId: [0],
+        transactionTypeId: [0],
+        startDate: [''],
+        endDate: ['']
+    });
+    paginationForm: FormGroup = this.formBuilder.group({
+        pageSize: [PAGE_CONFIG.DEFAULT_PAGE_SIZE],
+        pageNumber: [1]
+    });
 
-  // Filter values (UI only - not implemented)
-  selectedCategory: string = 'All Categories';
-  selectedPaymentMode: string = 'All Payment Types';
-  selectedDate: Date | null = null;
-  searchText: string = '';
+    transactionsRequestDTO: TransactionsRequestDTO = {
+        searchText: '',
+        categoryId: 0,
+        transactionTypeID: 0,
+        startDate: null,
+        endDate: null,
+        pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
+        pageNumber: 1
+    };
 
-  constructor(
-    private router: Router,
-    private transactionService: TransactionService,
-    private initialDataService: InitialDataService
-  ) {
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state as { analysisTypeId?: number } | undefined;
-    this.analysisTypeId = state?.analysisTypeId ?? null;
-  }
+    private buildPayload(): void {
+        const formValue = this.searchForm.getRawValue();
+        const paginationValue = this.paginationForm.getRawValue();
+        const startDate = this.parseDateInput(formValue.startDate);
+        const endDate = this.parseDateInput(formValue.endDate);
 
-  ngOnInit(): void {
-    this.loadTransactions();
-    this.loadFilterOptions();
-  }
+        this.transactionsRequestDTO = {
+            searchText: formValue.searchText.trim() ?? '',
+            categoryId: formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId,
+            startDate,
+            endDate,
+            pageSize: paginationValue.pageSize,
+            pageNumber: paginationValue.pageNumber
+        };
+    }
 
-  private loadTransactions(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.transactionService.getTransactions().subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          this.allTransactions = this.mapTransactions(response.data);
-          this.filteredTransactions = [...this.allTransactions];
-          // Sort by date (most recent first)
-          this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
-        } else {
-          this.errorMessage = response.message || 'Failed to load transactions';
+    private parseDateInput(value: string): Date | null {
+        if (!value) {
+            return null;
         }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'An error occurred while loading transactions';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
-    const categories = this.initialDataService.getCategories();
-    const transactionTypes = this.initialDataService.getTransactionTypes();
-
-    return transactions.map(t => {
-      const category = categories.find(c => c.id === t.categoryId);
-      const transactionType = transactionTypes.find(tt => tt.id === t.transactionTypeID);
-
-      return {
-        id: t.transactionId,
-        title: (t as any).title || 'Untitled Transaction',
-        amount: t.amount,
-        category: category?.name || 'Unknown',
-        transactionType: transactionType?.name || 'Unknown',
-        date: new Date(t.dateTime),
-        notes: t.notes || undefined
-      };
-    });
-  }
-
-  private loadFilterOptions(): void {
-    // Load categories and transaction types for filter dropdowns (UI only)
-    const categories = this.initialDataService.getCategories();
-    const transactionTypes = this.initialDataService.getTransactionTypes();
-
-    if (categories.length > 0) {
-      this.categories = ['All Categories', ...categories.map(c => c.name)];
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
-    if (transactionTypes.length > 0) {
-      this.paymentModes = ['All Payment Types', ...transactionTypes.map(t => t.name)];
+    ngOnInit(): void {
+        this.searchForm.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.paginationForm.patchValue({ pageNumber: 1 }, { emitEvent: false });
+            });
+
+        this.paginationForm.get('pageSize')?.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.paginationForm.patchValue({ pageNumber: 1 }, { emitEvent: false });
+            });
+
+        combineLatest([
+            this.searchForm.valueChanges.pipe(startWith(this.searchForm.getRawValue())),
+            this.paginationForm.valueChanges.pipe(startWith(this.paginationForm.getRawValue()))
+        ]).pipe(
+            debounceTime(300),
+            switchMap(() => {
+                this.buildPayload();
+                this.isLoading.set(true);
+                return this.transactionService.getTransactions(this.transactionsRequestDTO);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: (response: APIResponse<TransactionsDTO>) => {
+                if (response.success && response.data) {
+                    this.allTransactions = this.mapTransactions(response.data.transactions);
+                    this.totalCount = response.data.totalCount;
+                    this.netBalance.set(response.data.netBalance);
+                    this.pageBalance.set(response.data.pageBalance);
+                    this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
+                    this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
+                    this.ensurePageSizeOption(response.data.pageSize);
+                } else {
+                    this.errorMessage = response.message || 'Failed to load transactions';
+                }
+                this.isLoading.set(false);
+            },
+            error: (error) => {
+                this.errorMessage = error.message || 'An error occurred while loading transactions';
+                this.isLoading.set(false);
+            }
+        });
     }
-  }
 
-  applyFilters(): void {
-    // Filter logic is kept but not implemented - just show all transactions
-    // UI components are kept for future implementation
-    this.filteredTransactions = [...this.allTransactions];
-    this.filteredTransactions.sort((a, b) => b.date.getTime() - a.date.getTime());
-  }
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 
-  onCategoryChange(): void {
-    this.applyFilters();
-  }
+    private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
+        return transactions.map(t => {
+            const category = this.categories.find(c => c.categoryId === t.categoryId);
+            const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
 
-  onPaymentModeChange(): void {
-    this.applyFilters();
-  }
+            return {
+                id: t.transactionId,
+                title: t.title,
+                amount: t.amount,
+                category: category?.categoryName || 'Unknown',
+                transactionType: transactionType?.transactionTypeName || 'Unknown',
+                date: new Date(t.dateTime),
+                notes: t.notes || undefined
+            };
+        });
+    }
 
-  onDateChange(): void {
-    this.applyFilters();
-  }
+    clearFilters(): void {
+        this.searchForm.setValue({
+            searchText: '',
+            categoryId: 0,
+            transactionTypeId: 0,
+            startDate: '',
+            endDate: ''
+        });
+    }
 
-  onSearchChange(): void {
-    this.applyFilters();
-  }
+    addTransaction(): void {
+        this.router.navigate(['/transactions/add-transaction']);
+    }
 
-  clearFilters(): void {
-    this.selectedCategory = 'All Categories';
-    this.selectedPaymentMode = 'All Payment Types';
-    this.selectedDate = null;
-    this.searchText = '';
-    this.applyFilters();
-  }
+    goToPage(page: number): void {
+        if (page < 1 || page > this.getLastPage()) {
+            return;
+        }
+        this.paginationForm.patchValue({ pageNumber: page });
+    }
 
-  addTransaction(): void {
-    // Navigate to add transaction page or open modal
-    this.router.navigate(['/transactions/add-transaction']);
-  }
+    goToFirstPage(): void {
+        this.goToPage(1);
+    }
 
-  viewTransactionDetails(id: number): void {
-    this.router.navigate(['/transactions/details', id]);
-  }
+    goToPreviousPage(): void {
+        const current = this.paginationForm.get('pageNumber')?.value ?? 1;
+        this.goToPage(current - 1);
+    }
 
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
-    }).format(amount);
-  }
+    goToNextPage(): void {
+        const current = this.paginationForm.get('pageNumber')?.value ?? 1;
+        this.goToPage(current + 1);
+    }
 
-  formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }).format(date);
-  }
+    goToLastPage(): void {
+        this.goToPage(this.getLastPage());
+    }
 
-  formatDateTime(date: Date): string {
-    return new Intl.DateTimeFormat('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  }
+    downloadFilteredTransactions(): void {
+        this.buildPayload();
+        this.transactionService.downloadTransactions(this.transactionsRequestDTO).subscribe({
+            next: (blob) => this.triggerDownload(blob, 'transactions-filtered.xlsx'),
+            error: (error) => {
+                this.errorMessage = error.message || 'Failed to download filtered transactions';
+            }
+        });
+    }
+
+    downloadAllTransactions(): void {
+        this.transactionService.downloadAllTransactions().subscribe({
+            next: (blob) => this.triggerDownload(blob, 'transactions-all.xlsx'),
+            error: (error) => {
+                this.errorMessage = error.message || 'Failed to download all transactions';
+            }
+        });
+    }
+
+    private triggerDownload(blob: Blob, fileName: string): void {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    viewTransactionDetails(id: number): void {
+        this.router.navigate(['/transactions/details', id]);
+    }
+
+    formatCurrency(amount: number): string {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(amount);
+    }
+
+    formatDate(date: Date): string {
+        return new Intl.DateTimeFormat('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }).format(date);
+    }
+
+    formatDateTime(date: Date): string {
+        return new Intl.DateTimeFormat('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
+    }
+
+    getLastPage(): number {
+        const pageSize = this.paginationForm.get('pageSize')?.value ?? PAGE_CONFIG.DEFAULT_PAGE_SIZE;
+        return Math.max(1, Math.ceil(this.totalCount / pageSize));
+    }
+
+    getPageNumbers(): number[] {
+        const lastPage = this.getLastPage();
+        return Array.from({ length: lastPage }, (_, index) => index + 1);
+    }
+
+    private ensurePageSizeOption(pageSize: number): void {
+        if (!this.pageSizeArray.includes(pageSize)) {
+            this.pageSizeArray = [...this.pageSizeArray, pageSize].sort((a, b) => a - b);
+        }
+    }
 }

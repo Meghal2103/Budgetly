@@ -4,6 +4,7 @@ import { SidebarService } from '../core/services/sidebar.service';
 import { AnalysisItems } from '../core/enums/analysis-items.enum';
 import {SecondaryHeaderComponent} from "./secondary-header/secondary-header.component";
 import {ChartModule} from "primeng/chart";
+import { routes } from '../core/enums/route.enum';
 
 interface Transaction {
     id: number;
@@ -308,6 +309,6 @@ export class AnalysisComponent implements OnInit {
     }
 
     public navigateToTransactions(): void {
-        this.router.navigate(['/transactions']);
+        this.router.navigate([routes.viewTransactions]);
     }
 }
