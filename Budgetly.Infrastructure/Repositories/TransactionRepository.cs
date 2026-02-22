@@ -41,10 +41,11 @@ namespace Budgetly.Infrastructure.Repositories
             var searchText = transactionsRequestDTO.SearchText?.Trim();
             var query = dbContext.Transactions.Where(t => t.UserId == userId 
                                     && (string.IsNullOrWhiteSpace(searchText) || t.Title.Contains(searchText) || t.Notes.Contains(searchText))
-                                    && (!transactionsRequestDTO.CategoryId.HasValue || t.CategoryId == transactionsRequestDTO.CategoryId.Value)
-                                    && (!transactionsRequestDTO.TransactionTypeID.HasValue || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID.Value)
+                                    && (transactionsRequestDTO.CategoryId == 0 || t.CategoryId == transactionsRequestDTO.CategoryId)
+                                    && (transactionsRequestDTO.TransactionTypeID == 0 || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID)
                                     && (!transactionsRequestDTO.StartDate.HasValue || t.DateTime.Date >= transactionsRequestDTO.StartDate.Value)
-                                    && (!transactionsRequestDTO.EndDate.HasValue || t.DateTime <= transactionsRequestDTO.EndDate.Value)).AsNoTracking().AsQueryable();
+                                    && (!transactionsRequestDTO.EndDate.HasValue || t.DateTime <= transactionsRequestDTO.EndDate.Value)
+                                    ).AsNoTracking().AsQueryable();
 
             var totalCount = await query.CountAsync();
             var pageSize = transactionsRequestDTO.PageSize;

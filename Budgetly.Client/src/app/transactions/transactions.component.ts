@@ -21,7 +21,6 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
-    private lastApiCallId = 0;
     private destroy$ = new Subject<void>();
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
     totalCount: number = 0;
@@ -47,8 +46,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
-        categoryId: null,
-        transactionTypeID: null,
+        categoryId: 0,
+        transactionTypeID: 0,
         startDate: null,
         endDate: null,
         pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
