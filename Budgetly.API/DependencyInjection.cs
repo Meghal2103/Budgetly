@@ -1,9 +1,10 @@
 using System.Text;
-using Budgetly.Application;
-using Budgetly.Infrastructure;
-using Budgetly.Core.Interfaces.Services;
 using Budgetly.API.Services;
+using Budgetly.Application;
+using Budgetly.Core.Interfaces.Services;
+using Budgetly.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -69,7 +70,9 @@ namespace Budgetly.API
                 });
             });
 
-            services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+            services.AddControllers()
+                    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase)
+                    .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
             services.AddCors(options =>
             {

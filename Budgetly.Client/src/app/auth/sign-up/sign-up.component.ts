@@ -54,17 +54,18 @@ export class SignUpComponent {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: message || 'Registration successful'
+          detail: message
         });
         this.router.navigate(['/auth/login']);
       },
       error: (error: Error) => {
+        console.log('Registration error:', error);
         this.sidebarService.appLoader = false;
         this.signUpForm.reset();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: error.message || 'An error occurred during registration'
+          detail: error.message
         });
       }
     });

@@ -83,13 +83,13 @@ export class AuthService {
                 if (token) {
                     this.decodeToken(token);
                     this.router.navigate([routes.viewTransactions]);
-                    return response.message || 'Login successful';
+                    return response.message;
                 }
                 throw new Error('No token received');
             }),
             catchError((errorResponse: HttpErrorResponse) => {
                 const apiError: APIResponse<string> = errorResponse.error;
-                const errorMessage = apiError?.message || 'An error occurred during login';
+                const errorMessage = apiError.message;
                 return throwError(() => new Error(errorMessage));
             })
         );
@@ -109,11 +109,13 @@ export class AuthService {
 
         return this.http.post<APIResponse<object>>(url, register).pipe(
             map((response: APIResponse<object>) => {
-                return response.message || 'Registration successful';
+                return response.message;
             }),
             catchError((errorResponse: HttpErrorResponse) => {
+                console.log('Error response from API:', errorResponse.error);
                 const apiError: APIResponse<string> = errorResponse.error;
-                const errorMessage = apiError?.message || 'An error occurred during registration';
+                const errorMessage = apiError.message;
+                console.log('Extracted error message:', errorMessage);
                 return throwError(() => new Error(errorMessage));
             })
         );

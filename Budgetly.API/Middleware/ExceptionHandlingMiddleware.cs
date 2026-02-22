@@ -27,6 +27,13 @@ namespace Budgetly.API.Middleware
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
         {
             httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = ex switch
+            {
+                Budgetly.Application.Exceptions.UserAlreadyExistsException => StatusCodes.Status409Conflict,
+                Budgetly.Application.Exceptions.UserNotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                _ => StatusCodes.Status500InternalServerError
+            };
             var response = APIResponse<object>.Error(ex.Message);
             string json = JsonSerializer.Serialize(response);
             await httpContext.Response.WriteAsync(json);
