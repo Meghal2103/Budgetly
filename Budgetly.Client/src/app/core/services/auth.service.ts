@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { JwtToken } from '../models/auth/jwt-token.model';
 import { jwtDecode } from 'jwt-decode';
-import { Login } from '../models/auth/auth.model';
+import { Login, Register } from '../models/auth/auth.model';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { routes } from '../enums/route.enum';
+import { api } from '../enums/api.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -98,5 +99,20 @@ export class AuthService {
         this._name = '';
         this._userId = 0;
         this.router.navigateByUrl('/auth/login');
+    }
+
+    public register(register: Register): Observable<string> {
+        const url = `${environment.baseUrl}${api.signUP}`;
+
+        return this.http.post<APIResponse<object>>(url, register).pipe(
+            map((response: APIResponse<object>) => {
+                return response.message || 'Registration successful';
+            }),
+            catchError((errorResponse: HttpErrorResponse) => {
+                const apiError: APIResponse<string> = errorResponse.error;
+                const errorMessage = apiError?.message || 'An error occurred during registration';
+                return throwError(() => new Error(errorMessage));
+            })
+        );
     }
 }
