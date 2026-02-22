@@ -7,7 +7,11 @@ using Budgetly.Core.ViewModel;
 
 namespace Budgetly.Application.Services
 {
-    internal class TransactionService(ITransactionRepository transactionRepository, IMapper mapper) : ITransactionService
+    internal class TransactionService(
+        ITransactionRepository transactionRepository,
+        IMapper mapper,
+        ICurrentUserService currentUserService
+    ) : ITransactionService
     {
         public async Task<TransactionViewModel> AddTransaction(AddEditTransaction addEditTransaction)
         {
@@ -28,8 +32,10 @@ namespace Budgetly.Application.Services
 
         public async Task<TransactionsDTO> GetTransactions()
         {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
             TransactionsDTO transactionsDTO = new();
-            var (count, transactions) = await transactionRepository.GetTransactions();
+            var (count, transactions) = await transactionRepository.GetTransactions(userId);
             transactionsDTO.TotalCount = count;
             transactionsDTO.Transactions =  mapper.Map<List<TransactionViewModel>>(transactions);
             transactionsDTO.PageSize = count;
@@ -40,11 +46,13 @@ namespace Budgetly.Application.Services
 
         public async Task<TransactionsDTO> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO)
         {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
             TransactionsDTO transactionsDTO = new();
-            var (count, transactions) = await transactionRepository.RequestTransactions(transactionsRequestDTO);
+            var (count, transactions) = await transactionRepository.RequestTransactions(transactionsRequestDTO, userId);
 
-            var pageSize = transactionsRequestDTO.PageSize.GetValueOrDefault(count);
-            var pageNumber = transactionsRequestDTO.PageNumber.GetValueOrDefault(1);
+            var pageSize = transactionsRequestDTO.PageSize;
+            var pageNumber = transactionsRequestDTO.PageNumber;
 
             transactionsDTO.TotalCount = count;
             transactionsDTO.Transactions = mapper.Map<List<TransactionViewModel>>(transactions);

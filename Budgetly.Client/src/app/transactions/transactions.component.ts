@@ -48,23 +48,40 @@ export class TransactionsComponent implements OnInit {
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
         categoryId: null,
-        transactionTypeID: null,
+        transactionTypeId: null,
         startDate: null,
         endDate: null,
-        pageSize: null,
-        pageNumber: null
+        pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
+        pageNumber: 1
     };
 
     ngOnInit(): void {
-        this.searchForm.valueChanges.subscribe(() => this.onFiltersChange());
-        this.paginationForm.valueChanges.subscribe(() => this.onFiltersChange());
+        this.searchForm.valueChanges.subscribe(() => this.loadTransactions());
+        this.paginationForm.valueChanges.subscribe(() => this.loadTransactions());
         this.loadTransactions();
+    }
+
+    private buildPayload(): void {
+        const formValue = this.searchForm.getRawValue();
+        const paginationValue = this.paginationForm.getRawValue();
+
+        this.transactionsRequestDTO = {
+            searchText: formValue.searchText.trim(),
+            categoryId: formValue.categoryId,
+            transactionTypeId: formValue.transactionTypeId,
+            startDate: formValue.startDate,
+            endDate: formValue.endDate,
+            pageSize: paginationValue.pageSize,
+            pageNumber: paginationValue.pageNumber
+        };
     }
 
     private loadTransactions(): void {
         this.errorMessage = '';
+        this.isLoading.set(true);
+        this.buildPayload();
 
-        this.transactionService.getTransactions().subscribe({
+        this.transactionService.getTransactions(this.transactionsRequestDTO).subscribe({
             next: (response: APIResponse<TransactionsDTO>) => {
                 if (response.success && response.data) {
                     this.allTransactions = this.mapTransactions(response.data.transactions);
@@ -88,11 +105,10 @@ export class TransactionsComponent implements OnInit {
         return transactions.map(t => {
             const category = this.categories.find(c => c.categoryId === t.categoryId);
             const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
-            const title = this.resolveTransactionTitle(t);
 
             return {
                 id: t.transactionId,
-                title,
+                title: t.title,
                 amount: t.amount,
                 category: category?.categoryName || 'Unknown',
                 transactionType: transactionType?.transactionTypeName || 'Unknown',
@@ -100,20 +116,6 @@ export class TransactionsComponent implements OnInit {
                 notes: t.notes || undefined
             };
         });
-    }
-
-    onFiltersChange(): void {
-        const formValue = this.searchForm.getRawValue();
-        const paginationValue = this.paginationForm.getRawValue();
-        this.transactionsRequestDTO = {
-            searchText: formValue.searchText.trim(),
-            categoryId: formValue.categoryId,
-            transactionTypeID: formValue.transactionTypeId,
-            startDate: formValue.startDate,
-            endDate: formValue.endDate,
-            pageSize: paginationValue.pageSize,
-            pageNumber: paginationValue.pageNumber
-        };
     }
 
     clearFilters(): void {
@@ -168,16 +170,6 @@ export class TransactionsComponent implements OnInit {
     getPageNumbers(): number[] {
         const lastPage = this.getLastPage();
         return Array.from({ length: lastPage }, (_, index) => index + 1);
-    }
-
-    private resolveTransactionTitle(transaction: TransactionDTO): string {
-        const rawTitle = (transaction as any).title
-            ?? (transaction as any).transactionTitle
-            ?? (transaction as any).description
-            ?? (transaction as any).name;
-
-        const title = typeof rawTitle === 'string' ? rawTitle.trim() : '';
-        return title.length > 0 ? title : 'Untitled Transaction';
     }
 
     private ensurePageSizeOption(pageSize: number): void {

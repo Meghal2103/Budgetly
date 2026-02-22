@@ -3,7 +3,6 @@ using Budgetly.Application;
 using Budgetly.Infrastructure;
 using Budgetly.Core.Interfaces.Services;
 using Budgetly.API.Services;
-using Budgetly.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,7 +18,6 @@ namespace Budgetly.API
 
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<CurrentUser>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

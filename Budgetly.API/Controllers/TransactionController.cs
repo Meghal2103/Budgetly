@@ -34,7 +34,7 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get-transactions")]
+        [HttpGet("get-all-transactions")]
         public async Task<IActionResult> GetTransactions()
         {
             APIResponse<TransactionsDTO> response = new();
