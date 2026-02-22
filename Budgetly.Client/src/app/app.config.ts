@@ -6,6 +6,7 @@ import {
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import Lara from '@primeuix/themes/Lara';
 
 import { routes } from './app.routes';
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
                 preset: Lara
             }
         }),
+        MessageService,
         provideAppInitializer(() => {
             const initialDataService = inject(InitialDataService);
             void initialDataService.initializeAppData();

@@ -18,7 +18,7 @@ namespace Budgetly.Application.DTOs.Auth
         public string LastName { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Password is Requierd")]
         [DataType(DataType.Password)]

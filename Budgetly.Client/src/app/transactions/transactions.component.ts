@@ -10,6 +10,7 @@ import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
 import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
 import { SlicePipe } from '@angular/common';
+import { MessageService } from 'primeng/api';
 import { SidebarService } from '../core/services/sidebar.service';
 import { SIDEBAR_ITEMS } from '../core/config/sidebar.config';
 
@@ -24,6 +25,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
+    private messageService = inject(MessageService);
     private sidebarService = inject(SidebarService);
     private destroy$ = new Subject<void>();
     private totalCount: number = 0;
@@ -121,12 +123,20 @@ export class TransactionsComponent implements OnInit, OnDestroy {
                     this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
                     this.ensurePageSizeOption(response.data.pageSize);
                 } else {
-                    this.errorMessage = response.message || 'Failed to load transactions';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: response.message || 'Failed to load transactions'
+                    });
                 }
                 this.isLoading.set(false);
             },
             error: (error) => {
-                this.errorMessage = error.message || 'An error occurred while loading transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'An error occurred while loading transactions'
+                });
                 this.isLoading.set(false);
             }
         });
@@ -198,7 +208,11 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.transactionService.downloadTransactions(this.transactionsRequestDTO).subscribe({
             next: (blob) => this.triggerDownload(blob, 'transactions-filtered.xlsx'),
             error: (error) => {
-                this.errorMessage = error.message || 'Failed to download filtered transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'Failed to download filtered transactions'
+                });
             }
         });
     }
@@ -207,7 +221,11 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.transactionService.downloadAllTransactions().subscribe({
             next: (blob) => this.triggerDownload(blob, 'transactions-all.xlsx'),
             error: (error) => {
-                this.errorMessage = error.message || 'Failed to download all transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'Failed to download all transactions'
+                });
             }
         });
     }

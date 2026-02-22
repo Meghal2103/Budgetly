@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { JwtToken } from '../models/auth/jwt-token.model';
 import { jwtDecode } from 'jwt-decode';
-import { Login } from '../models/auth/login.model';
+import { Login } from '../models/auth/auth.model';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { routes } from '../enums/route.enum';

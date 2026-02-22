@@ -1,12 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 import {PrimaryHeaderComponent} from "./shared/components/primary-header/primary-header.component";
 import {InitialDataService} from "./core/services/initial-data.service";
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, PrimaryHeaderComponent],
+  imports: [RouterOutlet, PrimaryHeaderComponent, ToastModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
