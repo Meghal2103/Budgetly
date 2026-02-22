@@ -1,6 +1,3 @@
-# Transaction
-## 1. Correct Date
-
 # Sidebar
 ## 1. remove description
 ## 2. correct activation logic

@@ -83,6 +83,18 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.searchForm.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.paginationForm.patchValue({ pageNumber: 1 }, { emitEvent: false });
+            });
+
+        this.paginationForm.get('pageSize')?.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.paginationForm.patchValue({ pageNumber: 1 }, { emitEvent: false });
+            });
+
         combineLatest([
             this.searchForm.valueChanges.pipe(startWith(this.searchForm.getRawValue())),
             this.paginationForm.valueChanges.pipe(startWith(this.paginationForm.getRawValue()))
