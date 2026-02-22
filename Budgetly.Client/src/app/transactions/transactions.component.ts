@@ -8,6 +8,7 @@ import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
 import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
+import { switchMap, take } from 'rxjs';
 
 @Component({
     selector: 'app-transactions',
@@ -20,8 +21,8 @@ export class TransactionsComponent implements OnInit {
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
+    private lastApiCallId = 0;
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
-    analysisTypeId: number | null = null;
 
     totalCount = 1// Placeholder, should be set from API response
 
@@ -89,25 +90,33 @@ export class TransactionsComponent implements OnInit {
     private loadTransactions(): void {
         this.errorMessage = '';
         this.isLoading.set(true);
+        const currentApiCallId = ++this.lastApiCallId;
         this.buildPayload();
 
-        this.transactionService.getTransactions(this.transactionsRequestDTO).subscribe({
-            next: (response: APIResponse<TransactionsDTO>) => {
-                if (response.success && response.data) {
-                    this.allTransactions = this.mapTransactions(response.data.transactions);
-                    this.totalCount = response.data.totalCount;
-                    this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
-                    this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
-                    this.ensurePageSizeOption(response.data.pageSize);
-                } else {
-                    this.errorMessage = response.message || 'Failed to load transactions';
+        this.transactionService.getTransactions(this.transactionsRequestDTO).pipe(
+            take(1),
+            switchMap(res => {
+                if (currentApiCallId === this.lastApiCallId) {
+                    return [res];
                 }
-                this.isLoading.set(false);
-            },
-            error: (error) => {
-                this.errorMessage = error.message || 'An error occurred while loading transactions';
-                this.isLoading.set(false);
-            }
+                return [];
+            })).subscribe({
+                next: (response: APIResponse<TransactionsDTO>) => {
+                    if (response.success && response.data) {
+                        this.allTransactions = this.mapTransactions(response.data.transactions);
+                        this.totalCount = response.data.totalCount;
+                        this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
+                        this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
+                        this.ensurePageSizeOption(response.data.pageSize);
+                    } else {
+                        this.errorMessage = response.message || 'Failed to load transactions';
+                    }
+                    this.isLoading.set(false);
+                },
+                error: (error) => {
+                    this.errorMessage = error.message || 'An error occurred while loading transactions';
+                    this.isLoading.set(false);
+                }
         });
     }
 
