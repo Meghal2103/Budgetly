@@ -1,75 +1,94 @@
 <div class="d-flex justify-content-center align-items-center" style="min-height: 81vh">
-    <div class="card shadow-sm rounded-4 p-4 my-5" style="width: 100%; max-width: 420px">
+    <div class="card shadow-sm rounded-4 p-4 my-5" style="width: 100%; max-width: 520px">
         <h3 class="text-center mb-4 fw-bold text-muted">Create your Budgetly account</h3>
 
         <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label for="firstName" class="form-label">First name</label>
-                <input
-                    type="text"
-                    id="firstName"
-                    class="form-control"
-                    placeholder="Enter your first name"
-                    formControlName="firstName"
-                />
-                @if (signUpForm.get('firstName')?.touched && signUpForm.get('firstName')?.invalid) {
-                    <small class="text-danger">First name is required (min 2 chars).</small>
-                }
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">First name</label>
+                    <input
+                        type="text"
+                        id="firstName"
+                        class="form-control"
+                        placeholder="Enter your first name"
+                        formControlName="firstName"
+                    />
+                    @if (signUpForm.get('firstName')?.touched && signUpForm.get('firstName')?.invalid) {
+                        <small class="text-danger">First name is required (min 2 chars).</small>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Last name</label>
+                    <input
+                        type="text"
+                        id="lastName"
+                        class="form-control"
+                        placeholder="Enter your last name"
+                        formControlName="lastName"
+                    />
+                    @if (signUpForm.get('lastName')?.touched && signUpForm.get('lastName')?.invalid) {
+                        <small class="text-danger">Last name is required (min 2 chars).</small>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        placeholder="Enter your email"
+                        formControlName="email"
+                    />
+                    @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.invalid) {
+                        <small class="text-danger">Enter a valid email.</small>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <label for="dob" class="form-label">Date of birth</label>
+                    <input type="date" id="dob" class="form-control" formControlName="dateOfBirth" />
+                    @if (
+                        signUpForm.get('dateOfBirth')?.touched && signUpForm.get('dateOfBirth')?.invalid
+                    ) {
+                        <small class="text-danger">Date of birth is required.</small>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        class="form-control"
+                        placeholder="Create a password"
+                        formControlName="password"
+                    />
+                    @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.invalid) {
+                        <small class="text-danger">Min 8 chars, 1 letter, 1 special character.</small>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <label for="confirmPassword" class="form-label">Confirm password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        class="form-control"
+                        placeholder="Re-enter your password"
+                        formControlName="confirmPassword"
+                    />
+                    @if (signUpForm.get('confirmPassword')?.touched && signUpForm.get('confirmPassword')?.invalid) {
+                        <small class="text-danger">Confirm password is required.</small>
+                    }
+                    @if (signUpForm.touched && signUpForm.errors?.['mismatch']) {
+                        <small class="text-danger">Passwords do not match.</small>
+                    }
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="lastName" class="form-label">Last name</label>
-                <input
-                    type="text"
-                    id="lastName"
-                    class="form-control"
-                    placeholder="Enter your last name"
-                    formControlName="lastName"
-                />
-                @if (signUpForm.get('lastName')?.touched && signUpForm.get('lastName')?.invalid) {
-                    <small class="text-danger">Last name is required (min 2 chars).</small>
-                }
-            </div>
-
-            <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input
-                    type="email"
-                    id="email"
-                    class="form-control"
-                    placeholder="Enter your email"
-                    formControlName="email"
-                />
-                @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.invalid) {
-                    <small class="text-danger">Enter a valid email.</small>
-                }
-            </div>
-
-            <div class="mb-3">
-                <label for="dob" class="form-label">Date of birth</label>
-                <input type="date" id="dob" class="form-control" formControlName="dateOfBirth" />
-                @if (
-                    signUpForm.get('dateOfBirth')?.touched && signUpForm.get('dateOfBirth')?.invalid
-                ) {
-                    <small class="text-danger">Date of birth is required.</small>
-                }
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    class="form-control"
-                    placeholder="Create a password"
-                    formControlName="password"
-                />
-                @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.invalid) {
-                    <small class="text-danger">Password must be at least 6 characters.</small>
-                }
-            </div>
-
-            <div class="d-grid mb-3">
+            <div class="d-grid mb-3 mt-3">
                 <button
                     type="submit"
                     class="btn btn-primary"

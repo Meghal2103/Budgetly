@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../core/services/auth.service';
@@ -24,8 +24,13 @@ export class SignUpComponent {
     lastName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     dateOfBirth: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(6)]]
-  });
+    password: ['', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.pattern(/^(?=.*[A-Za-z])(?=.*[^A-Za-z0-9]).{8,}$/)
+    ]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: [this.passwordsMatchValidator] });
 
   onSubmit(): void {
     if (this.signUpForm.invalid) {
@@ -63,5 +68,14 @@ export class SignUpComponent {
         });
       }
     });
+  }
+
+  private passwordsMatchValidator(control: AbstractControl): { mismatch: boolean } | null {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
+    if (!password || !confirmPassword) {
+      return null;
+    }
+    return password === confirmPassword ? null : { mismatch: true };
   }
 }
