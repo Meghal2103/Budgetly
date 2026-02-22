@@ -10,5 +10,6 @@ namespace Budgetly.Core.Interfaces.Services
         Task<List<TransactionType>> GetTransactionType();
         Task<List<Category>> GetCategories();
         Task<TransactionsDTO> GetTransactions();
+        Task<TransactionsDTO> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO);
     }
 }

@@ -37,5 +37,21 @@ namespace Budgetly.Application.Services
 
             return transactionsDTO;
         }
+
+        public async Task<TransactionsDTO> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO)
+        {
+            TransactionsDTO transactionsDTO = new();
+            var (count, transactions) = await transactionRepository.RequestTransactions(transactionsRequestDTO);
+
+            var pageSize = transactionsRequestDTO.PageSize.GetValueOrDefault(count);
+            var pageNumber = transactionsRequestDTO.PageNumber.GetValueOrDefault(1);
+
+            transactionsDTO.TotalCount = count;
+            transactionsDTO.Transactions = mapper.Map<List<TransactionViewModel>>(transactions);
+            transactionsDTO.PageSize = pageSize == 0 ? count : pageSize;
+            transactionsDTO.CurrentPage = pageNumber;
+
+            return transactionsDTO;
+        }
     }
 }

@@ -29,7 +29,7 @@ export interface Transaction {
     notes?: string;
 }
 
-export interface TransactionSearchDTO {
+export interface TransactionsRequestDTO {
     searchText: string;
     categoryId: number | null;
     transactionTypeID: number | null;

@@ -1,3 +1,4 @@
+using Budgetly.Core.DTOs.Transaction;
 using Budgetly.Core.Entities;
 
 namespace Budgetly.Core.Interfaces.Repository
@@ -9,5 +10,6 @@ namespace Budgetly.Core.Interfaces.Repository
         public Task<List<TransactionType>> GetTransactionType();
         public Task<List<Category>> GetCategories();
         public Task<(int count, List<Transaction>)> GetTransactions();
+        public Task<(int count, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO);
     }
 }

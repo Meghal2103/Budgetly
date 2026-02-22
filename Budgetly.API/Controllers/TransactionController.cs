@@ -47,6 +47,19 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
+        [HttpPost("get-transactions")]
+        public async Task<IActionResult> GetTransactions([FromBody] TransactionsRequestDTO transactionsRequestDTO)
+        {
+            APIResponse<TransactionsDTO> response = new();
+
+            var transactions = await transactionService.RequestTransactions(transactionsRequestDTO);
+            response.Success = true;
+            response.Message = "Transaction search returned successfully.";
+            response.Data = transactions;
+
+            return Ok(response);
+        }
+
         [HttpGet("get-transaction-type")]
         public async Task<IActionResult> GetTransactionType()
         {

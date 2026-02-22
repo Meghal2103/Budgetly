@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
-import { TransactionDTO, Transaction, TransactionSearchDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
+import { TransactionDTO, Transaction, TransactionsRequestDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
@@ -45,7 +45,7 @@ export class TransactionsComponent implements OnInit {
         pageNumber: [1]
     });
 
-    transactionSearchDTO: TransactionSearchDTO = {
+    transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
         categoryId: null,
         transactionTypeID: null,
@@ -105,7 +105,7 @@ export class TransactionsComponent implements OnInit {
     onFiltersChange(): void {
         const formValue = this.searchForm.getRawValue();
         const paginationValue = this.paginationForm.getRawValue();
-        this.transactionSearchDTO = {
+        this.transactionsRequestDTO = {
             searchText: formValue.searchText.trim(),
             categoryId: formValue.categoryId,
             transactionTypeID: formValue.transactionTypeId,
