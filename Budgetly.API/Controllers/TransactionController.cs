@@ -60,6 +60,22 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("export-transactions")]
+        public async Task<IActionResult> ExportAllTransactions()
+        {
+            var content = await transactionService.ExportAllTransactionsExcel();
+            var fileName = $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        [HttpPost("export-transactions")]
+        public async Task<IActionResult> ExportFilteredTransactions([FromBody] TransactionsRequestDTO transactionsRequestDTO)
+        {
+            var content = await transactionService.ExportTransactionsExcel(transactionsRequestDTO);
+            var fileName = $"transactions-filtered-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
         [HttpGet("get-transaction-type")]
         public async Task<IActionResult> GetTransactionType()
         {
