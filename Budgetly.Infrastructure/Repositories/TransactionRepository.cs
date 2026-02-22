@@ -43,7 +43,7 @@ namespace Budgetly.Infrastructure.Repositories
                                     && (string.IsNullOrWhiteSpace(searchText) || t.Title.Contains(searchText) || t.Notes.Contains(searchText))
                                     && (!transactionsRequestDTO.CategoryId.HasValue || t.CategoryId == transactionsRequestDTO.CategoryId.Value)
                                     && (!transactionsRequestDTO.TransactionTypeID.HasValue || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID.Value)
-                                    && (!transactionsRequestDTO.StartDate.HasValue || t.DateTime >= transactionsRequestDTO.StartDate.Value)
+                                    && (!transactionsRequestDTO.StartDate.HasValue || t.DateTime.Date >= transactionsRequestDTO.StartDate.Value)
                                     && (!transactionsRequestDTO.EndDate.HasValue || t.DateTime <= transactionsRequestDTO.EndDate.Value)).AsNoTracking().AsQueryable();
 
             var totalCount = await query.CountAsync();

@@ -48,7 +48,7 @@ export class TransactionsComponent implements OnInit {
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
         categoryId: null,
-        transactionTypeId: null,
+        transactionTypeID: null,
         startDate: null,
         endDate: null,
         pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
@@ -64,16 +64,26 @@ export class TransactionsComponent implements OnInit {
     private buildPayload(): void {
         const formValue = this.searchForm.getRawValue();
         const paginationValue = this.paginationForm.getRawValue();
+        const startDate = this.parseDateInput(formValue.startDate);
+        const endDate = this.parseDateInput(formValue.endDate);
 
         this.transactionsRequestDTO = {
             searchText: formValue.searchText.trim(),
-            categoryId: formValue.categoryId,
-            transactionTypeId: formValue.transactionTypeId,
-            startDate: formValue.startDate,
-            endDate: formValue.endDate,
+            categoryId: formValue.categoryId === 0 ? null : formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
+            startDate,
+            endDate,
             pageSize: paginationValue.pageSize,
             pageNumber: paginationValue.pageNumber
         };
+    }
+
+    private parseDateInput(value: string): Date | null {
+        if (!value) {
+            return null;
+        }
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
     private loadTransactions(): void {
