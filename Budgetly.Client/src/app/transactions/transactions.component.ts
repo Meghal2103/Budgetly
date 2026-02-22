@@ -23,8 +23,10 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
     private destroy$ = new Subject<void>();
+    private totalCount: number = 0;
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
-    totalCount: number = 0;
+    netBalance = signal(-12500);
+    pageBalance = signal(3200);
 
     // Transaction data
     allTransactions: Transaction[] = [];
@@ -97,6 +99,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
                 if (response.success && response.data) {
                     this.allTransactions = this.mapTransactions(response.data.transactions);
                     this.totalCount = response.data.totalCount;
+                    this.netBalance.set(response.data.netBalance);
+                    this.pageBalance.set(response.data.pageBalance);
                     this.paginationForm.get('pageNumber')?.setValue(response.data.currentPage, { emitEvent: false });
                     this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
                     this.ensurePageSizeOption(response.data.pageSize);

@@ -42,5 +42,7 @@ export interface TransactionsDTO {
     totalCount: number;
     pageSize: number;
     currentPage: number;
+    netBalance: number;
+    pageBalance: number;
     transactions: TransactionDTO[];
 }

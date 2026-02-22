@@ -2,9 +2,6 @@
 ## 1. Correct Date
 ## 2. Download Displayed Transaction
 ## 3. Doenload all Transaction
-## 4. Move Clear filter button 
-## 5. net balance 
-## 6. current pages balance
 
 # Sidebar
 ## 1. remove description
