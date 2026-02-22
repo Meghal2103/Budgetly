@@ -152,6 +152,34 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.router.navigate(['/transactions/add-transaction']);
     }
 
+    downloadFilteredTransactions(): void {
+        this.buildPayload();
+        this.transactionService.downloadTransactions(this.transactionsRequestDTO).subscribe({
+            next: (blob) => this.triggerDownload(blob, 'transactions-filtered.xlsx'),
+            error: (error) => {
+                this.errorMessage = error.message || 'Failed to download filtered transactions';
+            }
+        });
+    }
+
+    downloadAllTransactions(): void {
+        this.transactionService.downloadAllTransactions().subscribe({
+            next: (blob) => this.triggerDownload(blob, 'transactions-all.xlsx'),
+            error: (error) => {
+                this.errorMessage = error.message || 'Failed to download all transactions';
+            }
+        });
+    }
+
+    private triggerDownload(blob: Blob, fileName: string): void {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(url);
+    }
+
     viewTransactionDetails(id: number): void {
         this.router.navigate(['/transactions/details', id]);
     }

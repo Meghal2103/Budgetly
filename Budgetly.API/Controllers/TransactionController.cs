@@ -60,7 +60,7 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("export-transactions")]
+        [HttpGet("export-all-transactions")]
         public async Task<IActionResult> ExportAllTransactions()
         {
             var content = await transactionService.ExportAllTransactionsExcel();

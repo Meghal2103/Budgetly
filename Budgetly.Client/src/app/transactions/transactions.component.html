@@ -5,9 +5,17 @@
             <h2 class="mb-2">All Transactions</h2>
             <p class="text-muted mb-0">View and manage your transaction history</p>
         </div>
-        <button class="btn btn-primary" (click)="addTransaction()">
-            <i class="bi bi-plus-circle me-2"></i>Add Transaction
-        </button>
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-primary" (click)="addTransaction()">
+                <i class="bi bi-plus-circle me-2"></i>Add Transaction
+            </button>
+            <button class="btn btn-outline-secondary" (click)="downloadFilteredTransactions()">
+                <i class="bi bi-download me-2"></i>Download Selected
+            </button>
+            <button class="btn btn-outline-secondary" (click)="downloadAllTransactions()">
+                <i class="bi bi-download me-2"></i>Download All
+            </button>
+        </div>
     </div>
 
     <!-- Filters Section -->

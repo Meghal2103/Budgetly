@@ -1,7 +1,5 @@
 # Transaction
 ## 1. Correct Date
-## 2. Download Displayed Transaction
-## 3. Doenload all Transaction
 
 # Sidebar
 ## 1. remove description

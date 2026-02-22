@@ -36,5 +36,15 @@ export class TransactionService {
             })
         );
     }
+
+    downloadAllTransactions(): Observable<Blob> {
+        const url = `${environment.baseUrl}${api.downloadAllTransactions}`;
+        return this.http.get(url, { responseType: 'blob' });
+    }
+
+    downloadTransactions(transactionsRequestDTO: TransactionsRequestDTO): Observable<Blob> {
+        const url = `${environment.baseUrl}${api.downloadTransactions}`;
+        return this.http.post(url, transactionsRequestDTO, { responseType: 'blob' });
+    }
 }
 
