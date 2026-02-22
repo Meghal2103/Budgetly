@@ -1,99 +1,102 @@
-<div class="d-flex justify-content-center align-items-center" style="min-height: 81vh;">
-  <div class="card shadow-sm rounded-4 p-4 my-5" style="width: 100%; max-width: 420px;">
-    <h3 class="text-center mb-4 fw-bold text-muted">Create your Budgetly account</h3>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 81vh">
+    <div class="card shadow-sm rounded-4 p-4 my-5" style="width: 100%; max-width: 420px">
+        <h3 class="text-center mb-4 fw-bold text-muted">Create your Budgetly account</h3>
 
-    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label for="firstName" class="form-label">First name</label>
-        <input
-          type="text"
-          id="firstName"
-          class="form-control"
-          placeholder="Enter your first name"
-          formControlName="firstName"
-          [disabled]="isLoading">
-        @if (signUpForm.get('firstName')?.touched && signUpForm.get('firstName')?.invalid) {
-          <small class="text-danger">First name is required (min 2 chars).</small>
-        }
-      </div>
+        <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First name</label>
+                <input
+                    type="text"
+                    id="firstName"
+                    class="form-control"
+                    placeholder="Enter your first name"
+                    formControlName="firstName"
+                />
+                @if (signUpForm.get('firstName')?.touched && signUpForm.get('firstName')?.invalid) {
+                    <small class="text-danger">First name is required (min 2 chars).</small>
+                }
+            </div>
 
-      <div class="mb-3">
-        <label for="lastName" class="form-label">Last name</label>
-        <input
-          type="text"
-          id="lastName"
-          class="form-control"
-          placeholder="Enter your last name"
-          formControlName="lastName"
-          [disabled]="isLoading">
-        @if (signUpForm.get('lastName')?.touched && signUpForm.get('lastName')?.invalid) {
-          <small class="text-danger">Last name is required (min 2 chars).</small>
-        }
-      </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last name</label>
+                <input
+                    type="text"
+                    id="lastName"
+                    class="form-control"
+                    placeholder="Enter your last name"
+                    formControlName="lastName"
+                />
+                @if (signUpForm.get('lastName')?.touched && signUpForm.get('lastName')?.invalid) {
+                    <small class="text-danger">Last name is required (min 2 chars).</small>
+                }
+            </div>
 
-      <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <input
-          type="email"
-          id="email"
-          class="form-control"
-          placeholder="Enter your email"
-          formControlName="email"
-          [disabled]="isLoading">
-        @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.invalid) {
-          <small class="text-danger">Enter a valid email.</small>
-        }
-      </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    placeholder="Enter your email"
+                    formControlName="email"
+                />
+                @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.invalid) {
+                    <small class="text-danger">Enter a valid email.</small>
+                }
+            </div>
 
-      <div class="mb-3">
-        <label for="dob" class="form-label">Date of birth</label>
-        <input
-          type="date"
-          id="dob"
-          class="form-control"
-          formControlName="dateOfBirth"
-          [disabled]="isLoading">
-        @if (signUpForm.get('dateOfBirth')?.touched && signUpForm.get('dateOfBirth')?.invalid) {
-          <small class="text-danger">Date of birth is required.</small>
-        }
-      </div>
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of birth</label>
+                <input type="date" id="dob" class="form-control" formControlName="dateOfBirth" />
+                @if (
+                    signUpForm.get('dateOfBirth')?.touched && signUpForm.get('dateOfBirth')?.invalid
+                ) {
+                    <small class="text-danger">Date of birth is required.</small>
+                }
+            </div>
 
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          id="password"
-          class="form-control"
-          placeholder="Create a password"
-          formControlName="password"
-          [disabled]="isLoading">
-        @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.invalid) {
-          <small class="text-danger">Password must be at least 6 characters.</small>
-        }
-      </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    placeholder="Create a password"
+                    formControlName="password"
+                />
+                @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.invalid) {
+                    <small class="text-danger">Password must be at least 6 characters.</small>
+                }
+            </div>
 
-      <div class="d-grid mb-3">
-        <button type="submit" class="btn btn-primary" [disabled]="signUpForm.invalid || isLoading">
-          @if (!isLoading) {
-            <span>
-              <i class="bi bi-person-plus me-2"></i>Create account
-            </span>
-          }
-          @if (isLoading) {
-            <span>
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Creating account...
-            </span>
-          }
-        </button>
-      </div>
+            <div class="d-grid mb-3">
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="signUpForm.invalid || sidebarService.appLoader"
+                >
+                    @if (!sidebarService.appLoader) {
+                        <span> <i class="bi bi-person-plus me-2"></i>Create account </span>
+                    }
+                    @if (sidebarService.appLoader) {
+                        <span>
+                            <span
+                                class="spinner-border spinner-border-sm me-2"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Creating account...
+                        </span>
+                    }
+                </button>
+            </div>
 
-      <div class="text-center">
-        <small class="text-muted">
-          Already have an account?
-          <a routerLink="/auth/login" class="text-decoration-none fw-semibold">Login here</a>
-        </small>
-      </div>
-    </form>
-  </div>
+            <div class="text-center">
+                <small class="text-muted">
+                    Already have an account?
+                    <a routerLink="/auth/login" class="text-decoration-none fw-semibold">Login here</a>
+                </small>
+            </div>
+        </form>
+    </div>
 </div>

@@ -11,6 +11,7 @@ import Lara from '@primeuix/themes/Lara';
 
 import { routes } from './app.routes';
 import {InitialDataService} from "./core/services/initial-data.service";
+import { AuthService } from './core/services/auth.service';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -28,10 +29,6 @@ export const appConfig: ApplicationConfig = {
                 preset: Lara
             }
         }),
-        MessageService,
-        provideAppInitializer(() => {
-            const initialDataService = inject(InitialDataService);
-            void initialDataService.initializeAppData();
-        })
+        MessageService
     ]
 };

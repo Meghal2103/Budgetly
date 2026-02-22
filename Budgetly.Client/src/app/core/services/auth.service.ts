@@ -9,11 +9,13 @@ import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
 import { routes } from '../enums/route.enum';
 import { api } from '../enums/api.enum';
+import { InitialDataService } from './initial-data.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
+    private initialDataService = inject(InitialDataService);
     private _isLoggedIn: boolean = false;
     private _email: string = '';
     private _name: string = '';
@@ -59,6 +61,7 @@ export class AuthService {
         // Get userId from nameid or sub claim (ClaimTypes.NameIdentifier)
         const userIdStr = jwtPayload.nameid || jwtPayload.sub || '';
         this._userId = userIdStr ? parseInt(userIdStr, 10) : 0;
+        this.initialDataService.initializeAppData();
         localStorage.setItem('authToken', token);
     }
 

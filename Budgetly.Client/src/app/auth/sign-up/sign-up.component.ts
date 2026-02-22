@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../core/services/auth.service';
 import { Register } from '../../core/models/auth/auth.model';
+import { SidebarService } from '../../core/services/sidebar.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -16,7 +17,7 @@ export class SignUpComponent {
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
   private router = inject(Router);
-  isLoading = false;
+  public sidebarService = inject(SidebarService);
 
   signUpForm: FormGroup = this.formBuilder.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -40,10 +41,10 @@ export class SignUpComponent {
       password: this.signUpForm.value.password
     };
 
-    this.isLoading = true;
+    this.sidebarService.appLoader = true;
     this.authService.register(payload).subscribe({
       next: (message: string) => {
-        this.isLoading = false;
+        this.sidebarService.appLoader = false;
         this.signUpForm.reset();
         this.messageService.add({
           severity: 'success',
@@ -53,7 +54,7 @@ export class SignUpComponent {
         this.router.navigate(['/auth/login']);
       },
       error: (error: Error) => {
-        this.isLoading = false;
+        this.sidebarService.appLoader = false;
         this.signUpForm.reset();
         this.messageService.add({
           severity: 'error',

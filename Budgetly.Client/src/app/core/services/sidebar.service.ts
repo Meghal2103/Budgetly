@@ -1,25 +1,34 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { SidebarItem } from '../models/sidebar.model';
 import { SIDEBAR_ITEMS } from '../config/sidebar.config';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class SidebarService {
-  public readonly sidebarItems: SidebarItem[] = SIDEBAR_ITEMS;
-  private router: Router = inject(Router);
-  private _activeIndex = 0;
+    public readonly sidebarItems: SidebarItem[] = SIDEBAR_ITEMS;
+    private router: Router = inject(Router);
+    private _activeIndex = 0;
+    readonly _appLoader = signal(false);
 
-  public navigate(item: SidebarItem): void {
-    this.router.navigateByUrl(item.route);
-  }
+    public navigate(item: SidebarItem): void {
+        this.router.navigateByUrl(item.route);
+    }
 
-  public activeIndex(): number {
-    return this._activeIndex;
-  }
+    public activeIndex(): number {
+        return this._activeIndex;
+    }
 
-  public activateElement(sidebarItems: SidebarItem): void {
-    this._activeIndex = this.sidebarItems.findIndex(item => item.id === sidebarItems.id);
-  }
+    set appLoader(value: boolean) {
+        this._appLoader.set(value);
+    }
+
+    get appLoader(): boolean {
+        return this._appLoader();
+    }
+
+    public activateElement(sidebarItems: SidebarItem): void {
+        this._activeIndex = this.sidebarItems.findIndex(item => item.id === sidebarItems.id);
+    }
 }

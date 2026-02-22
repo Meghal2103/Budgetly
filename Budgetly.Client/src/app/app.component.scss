@@ -1,11 +1,21 @@
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-shell.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .app-loader {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
+  background: rgba(248, 249, 250, 0.35);
   z-index: 1000;
+  pointer-events: none;
 }
 
 .loader-card {
@@ -19,4 +29,34 @@
 .loader-text {
   font-size: 0.95rem;
   letter-spacing: 0.02em;
+}
+
+.dot-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot-loader span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #1e88e5;
+  animation: dotPulse 0.9s ease-in-out infinite;
+}
+
+.dot-loader span:nth-child(2) {
+  animation-delay: 0.2s;
+  opacity: 0.7;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }

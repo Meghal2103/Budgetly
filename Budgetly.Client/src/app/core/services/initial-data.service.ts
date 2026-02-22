@@ -6,6 +6,7 @@ import { APIResponse } from '../models/api-response.model';
 import { TransactionType } from '../models/transaction/transaction-type.model';
 import { CategoryOption } from '../models/transaction/category.model';
 import {api} from "../enums/api.enum";
+import { SidebarService } from './sidebar.service';
 
 @Injectable({
     providedIn: 'root'
@@ -16,6 +17,7 @@ export class InitialDataService {
     private categories: CategoryOption[] = [];
     private isTransactionTypesLoaded = signal(false);
     private isCategoriesLoaded = signal(false);
+    private sidebarService = inject(SidebarService);
 
     readonly areTransactionTypesLoaded = this.isTransactionTypesLoaded.asReadonly();
     readonly areCategoriesLoaded = this.isCategoriesLoaded.asReadonly();
@@ -41,6 +43,7 @@ export class InitialDataService {
                     transactionTypeName: apiType.transactionTypeName
                 }));
                 this.isTransactionTypesLoaded.set(true);
+                this.sidebarService.appLoader = !this.isTransactionTypesLoaded() && !this.areCategoriesLoaded();
                 return this.transactionTypes;
             }),
             retry({
@@ -73,6 +76,7 @@ export class InitialDataService {
                     categoryName: apiCategory.categoryName
                 }));
                 this.isCategoriesLoaded.set(true);
+                this.sidebarService.appLoader = !this.isTransactionTypesLoaded() && !this.areCategoriesLoaded();
                 return this.categories;
             }),
             retry({
@@ -90,7 +94,5 @@ export class InitialDataService {
     getCategories(): CategoryOption[] {
         return this.categories;
     }
-
-    
 }
 
