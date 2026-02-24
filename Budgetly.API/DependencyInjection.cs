@@ -70,9 +70,7 @@ namespace Budgetly.API
                 });
             });
 
-            services.AddControllers()
-                    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase)
-                    .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+            services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
             services.AddCors(options =>
             {

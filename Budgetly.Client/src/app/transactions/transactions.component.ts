@@ -175,7 +175,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     }
 
     addTransaction(): void {
-        this.router.navigate(['/transactions/add-transaction']);
+        this.router.navigate(['/transactions/add-transaction'], { queryParams: { bulk: false } });
     }
 
     goToPage(page: number): void {

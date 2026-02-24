@@ -88,9 +88,8 @@ export class AuthService {
                 throw new Error('No token received');
             }),
             catchError((errorResponse: HttpErrorResponse) => {
-                const apiError: APIResponse<string> = errorResponse.error;
-                const errorMessage = apiError.message;
-                return throwError(() => new Error(errorMessage));
+                const apiError: APIResponse<object> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
             })
         );
     }
@@ -112,11 +111,8 @@ export class AuthService {
                 return response.message;
             }),
             catchError((errorResponse: HttpErrorResponse) => {
-                console.log('Error response from API:', errorResponse.error);
-                const apiError: APIResponse<string> = errorResponse.error;
-                const errorMessage = apiError.message;
-                console.log('Extracted error message:', errorMessage);
-                return throwError(() => new Error(errorMessage));
+                const apiError: APIResponse<object> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
             })
         );
     }

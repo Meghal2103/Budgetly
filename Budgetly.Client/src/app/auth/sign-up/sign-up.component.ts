@@ -59,7 +59,6 @@ export class SignUpComponent {
         this.router.navigate(['/auth/login']);
       },
       error: (error: Error) => {
-        console.log('Registration error:', error);
         this.sidebarService.appLoader = false;
         this.signUpForm.reset();
         this.messageService.add({

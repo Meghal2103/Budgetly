@@ -1,15 +1,19 @@
-using Budgetly.API.Models;
 using System.Text.Json;
+using Budgetly.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Budgetly.API.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly JsonSerializerOptions _jsonOptions;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, IOptions<JsonOptions> jsonOptions)
         {
             _next = next;
+            _jsonOptions = jsonOptions.Value.JsonSerializerOptions;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -35,7 +39,7 @@ namespace Budgetly.API.Middleware
                 _ => StatusCodes.Status500InternalServerError
             };
             var response = APIResponse<object>.Error(ex.Message);
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(response, _jsonOptions);
             await httpContext.Response.WriteAsync(json);
         }
     }
