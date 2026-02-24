@@ -4,8 +4,6 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -37,7 +35,7 @@ export class AddTransactionComponent implements OnInit {
     private formattedTime = this.today.toTimeString().split(' ')[0].substring(0, 5);
     transactionForm: FormGroup = this.fb.group({
         title: ['', [Validators.required, Validators.maxLength(200)]],
-        amount: ['', [Validators.required, (control: any) => this.amountValidator(control)]],
+        amount: ['', [Validators.required]],
         categoryId: [0, Validators.required],
         transactionTypeID: [0, Validators.required],
         date: [this.formattedDate, Validators.required],
@@ -56,24 +54,10 @@ export class AddTransactionComponent implements OnInit {
         this.sidebarService.activateElement(SIDEBAR_ITEMS[1]);
         this.transactionTypes = this.initialDataService.getTransactionTypes();
         this.categories = this.initialDataService.getCategories();
-        this.initializeForm();
         this.route.queryParams.subscribe(params => {
             this.isbulk = params['bulk'] === 'true';
         });
-    }
-
-    private initializeForm(): void {
-        this.transactionForm.get('amount')?.valueChanges.subscribe(value => {
-            if (value && typeof value === 'string' && value !== '') {
-                const hasMinus = value.startsWith('-');
-                console.log('Amount changed:', value, 'Has minus:', hasMinus, 'Current transaction type:', this.selectedTransactionType);
-                if (hasMinus && this.selectedTransactionType === 'cashIn') {
-                    this.selectedTransactionType = 'cashOut';
-                } else if (!hasMinus && this.selectedTransactionType === 'cashOut') {
-                    this.selectedTransactionType = 'cashIn';
-                }
-            }
-        });
+        this.setupAmountTypeSync();
     }
 
     onSubmit(): void {
@@ -160,43 +144,46 @@ export class AddTransactionComponent implements OnInit {
         return !!(field && field.invalid && field.touched);
     }
 
-    getAmountColorClass(): string {
-        return this.selectedTransactionType === 'cashOut' ? 'text-danger' : 'text-success';
+    private setupAmountTypeSync(): void {
+        this.transactionForm.get('amount')?.valueChanges.subscribe(value => {
+            if (value === null || value === undefined || value === '') {
+                return;
+            }
+
+            const stringValue = String(value).trim();
+            const hasMinus = stringValue.startsWith('-');
+            const numericValue = parseFloat(stringValue);
+            const isNegative = !isNaN(numericValue) && numericValue < 0;
+
+            this.selectedTransactionType = (hasMinus || isNegative) ? 'cashOut' : 'cashIn';
+        });
     }
-    
+
     onTransactionTypeSelect(type: 'cashOut' | 'cashIn'): void {
         this.selectedTransactionType = type;
         const amountControl = this.transactionForm.get('amount');
-        if (amountControl && amountControl.value) {
-            let currentValue = amountControl.value.toString();
+        if (!amountControl) {
+            return;
+        }
 
-            if (type === 'cashOut') {
-                // Add minus sign if not present
-                if (!currentValue.startsWith('-')) {
-                    amountControl.setValue('-' + currentValue, { emitEvent: false });
-                }
-            } else {
-                // Remove minus sign if present
-                if (currentValue.startsWith('-')) {
-                    amountControl.setValue(currentValue.substring(1), { emitEvent: false });
-                }
-            }
+        const currentValue = amountControl.value;
+        if (currentValue === null || currentValue === undefined || currentValue === '') {
+            return;
+        }
+
+        const numericValue = parseFloat(String(currentValue));
+        if (isNaN(numericValue)) {
+            return;
+        }
+
+        if (type === 'cashOut') {
+            amountControl.setValue(-Math.abs(numericValue), { emitEvent: false });
+        } else {
+            amountControl.setValue(Math.abs(numericValue), { emitEvent: false });
         }
     }
 
-
-    private amountValidator(control: AbstractControl): ValidationErrors | null {
-        if (!control.value) {
-            return null;
-        }
-        const value = parseFloat(control.value);
-        if (isNaN(value)) {
-            return { invalidAmount: true };
-        }
-        const absValue = Math.abs(value);
-        if (absValue < 0.01) {
-            return { min: true };
-        }
-        return null;
+    getAmountColorClass(): string {
+        return this.selectedTransactionType === 'cashOut' ? 'text-danger' : 'text-success';
     }
 }
