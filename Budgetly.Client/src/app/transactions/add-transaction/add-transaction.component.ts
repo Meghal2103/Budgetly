@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -9,12 +9,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TransactionService } from '../../core/services/transaction.service';
 import { InitialDataService } from '../../core/services/initial-data.service';
-import { CategoryOption } from '../../core/models/transaction/category.model'
-import { TransactionType } from '../../core/models/transaction/transaction-type.model'
 import { routes } from '../../core/enums/route.enum';
 import { SIDEBAR_ITEMS } from '../../core/config/sidebar.config';
 import { SidebarService } from '../../core/services/sidebar.service';
 import { AddTransactionRequest } from '../../core/models/transaction/transaction.model';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-add-transaction',
@@ -28,6 +27,7 @@ export class AddTransactionComponent implements OnInit {
     private transactionService = inject(TransactionService);
     private route = inject(ActivatedRoute);
     private initialDataService = inject(InitialDataService);
+    private messageService = inject(MessageService);
     public sidebarService = inject(SidebarService);
 
     private today = new Date();
@@ -36,17 +36,15 @@ export class AddTransactionComponent implements OnInit {
     transactionForm: FormGroup = this.fb.group({
         title: ['', [Validators.required, Validators.maxLength(200)]],
         amount: ['', [Validators.required]],
-        categoryId: [0, Validators.required],
-        transactionTypeID: [0, Validators.required],
+        categoryId: ['', Validators.required],
+        transactionTypeID: ['', Validators.required],
         date: [this.formattedDate, Validators.required],
         time: [this.formattedTime, Validators.required],
         notes: ['']
     });
 
-    errorMessage: string = '';
-
-    categories = this.initialDataService.categories;
-    transactionTypes = this.initialDataService.transactionTypes;
+    categories = computed(() => this.initialDataService.categories().filter(c => c.categoryId !== 0));
+    transactionTypes = computed(() => this.initialDataService.transactionTypes().filter(t => t.transactionTypeID !== 0));
     selectedTransactionType: 'cashOut' | 'cashIn' = 'cashIn';
     isbulk: boolean = true;
 
@@ -61,7 +59,6 @@ export class AddTransactionComponent implements OnInit {
     onSubmit(): void {
         if (this.transactionForm.valid) {
             this.sidebarService.appLoader = true;
-            this.errorMessage = '';
 
             const formValue = this.transactionForm.value;
             const dateTime = `${formValue.date}T${formValue.time}:00`;
@@ -79,25 +76,40 @@ export class AddTransactionComponent implements OnInit {
                 next: (response) => {
                     this.sidebarService.appLoader = false;
                     if (response.success && this.isbulk) {
-                        this.transactionForm.reset({
-                            title: '',
-                            amount: '',
-                            categoryId: 0,
-                            transactionTypeID: 0,
-                            date: this.formattedDate,
-                            time: this.formattedTime,
-                            notes: ''
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Success',
+                            detail: response.message || 'Transaction added successfully'
                         });
-                        this.selectedTransactionType = 'cashIn';
-                    } else if (response.success) {
-                        this.router.navigate([routes.viewTransactions]);
+                        if(this.isbulk){
+                            this.transactionForm.reset({
+                                title: '',
+                                amount: '',
+                                categoryId: 0,
+                                transactionTypeID: 0,
+                                date: this.formattedDate,
+                                time: this.formattedTime,
+                                notes: ''
+                            });
+                            this.selectedTransactionType = 'cashIn';
+                        } else {
+                            this.router.navigate([routes.viewTransactions]);
+                        }
                     } else {
-                        this.errorMessage = response.message
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: response.message || 'Failed to add transaction'
+                        });
                     }
                 },
                 error: (error) => {
-                    this.errorMessage = error.message
                     this.sidebarService.appLoader = false;
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: error.message || 'Failed to add transaction'
+                    });
                 }
             });
         } 

@@ -12,15 +12,6 @@
     <div class="form-section">
         <div class="card">
             <div class="card-body">
-                <!-- Error Message -->
-                @if (errorMessage) {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    {{ errorMessage }}
-                    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
-                </div>
-                }
-
                 <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
                     <div class="row g-3">
                         <!-- Title -->
@@ -83,7 +74,7 @@
                             <select id="categoryId" class="form-select"
                                 [class.is-invalid]="isFieldInvalid('categoryId')" formControlName="categoryId"
                                 [disabled]="sidebarService.appLoader">
-                                <option value="">Select a category</option>
+                                <option value="" disabled>Select a category</option>
                                 @for (category of categories(); track category) {
                                 <option [value]="category.categoryId">
                                     {{ category.categoryName }}
@@ -105,7 +96,7 @@
                             <select id="transactionTypeID" class="form-select"
                                 [class.is-invalid]="isFieldInvalid('transactionTypeID')"
                                 formControlName="transactionTypeID" [disabled]="sidebarService.appLoader">
-                                <option value="">Select transaction type</option>
+                                <option value="" disabled>Select transaction type</option>
                                 @for (type of transactionTypes(); track type) {
                                 <option [value]="type.transactionTypeID">
                                     {{ type.transactionTypeName }}
