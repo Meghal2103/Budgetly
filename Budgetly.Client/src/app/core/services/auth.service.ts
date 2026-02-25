@@ -4,14 +4,18 @@ import { Router } from '@angular/router';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { JwtToken } from '../models/auth/jwt-token.model';
 import { jwtDecode } from 'jwt-decode';
-import { Login } from '../models/auth/login.model';
+import { Login, Register } from '../models/auth/auth.model';
 import { environment } from '../../../environments/environment';
 import { APIResponse } from '../models/api-response.model';
+import { routes } from '../enums/route.enum';
+import { api } from '../enums/api.enum';
+import { InitialDataService } from './initial-data.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
+    private initialDataService = inject(InitialDataService);
     private _isLoggedIn: boolean = false;
     private _email: string = '';
     private _name: string = '';
@@ -57,6 +61,7 @@ export class AuthService {
         // Get userId from nameid or sub claim (ClaimTypes.NameIdentifier)
         const userIdStr = jwtPayload.nameid || jwtPayload.sub || '';
         this._userId = userIdStr ? parseInt(userIdStr, 10) : 0;
+        this.initialDataService.initializeAppData();
         localStorage.setItem('authToken', token);
     }
 
@@ -77,15 +82,14 @@ export class AuthService {
                 const token: string | null = response.token;
                 if (token) {
                     this.decodeToken(token);
-                    this.router.navigateByUrl('/dashboard');
-                    return response.message || 'Login successful';
+                    this.router.navigate([routes.viewTransactions]);
+                    return response.message;
                 }
                 throw new Error('No token received');
             }),
             catchError((errorResponse: HttpErrorResponse) => {
-                const apiError: APIResponse<string> = errorResponse.error;
-                const errorMessage = apiError?.message || 'An error occurred during login';
-                return throwError(() => new Error(errorMessage));
+                const apiError: APIResponse<object> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
             })
         );
     }
@@ -97,5 +101,19 @@ export class AuthService {
         this._name = '';
         this._userId = 0;
         this.router.navigateByUrl('/auth/login');
+    }
+
+    public register(register: Register): Observable<string> {
+        const url = `${environment.baseUrl}${api.signUP}`;
+
+        return this.http.post<APIResponse<object>>(url, register).pipe(
+            map((response: APIResponse<object>) => {
+                return response.message;
+            }),
+            catchError((errorResponse: HttpErrorResponse) => {
+                const apiError: APIResponse<object> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
+            })
+        );
     }
 }

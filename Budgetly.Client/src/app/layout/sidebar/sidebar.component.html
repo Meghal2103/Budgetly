@@ -1,13 +1,8 @@
 <nav class="sidebar-nav">
-  <div class="sidebar-header px-4 mb-3">
-    <h5 class="mb-0 fw-semibold">Expenditure</h5>
-    <small class="text-muted">Manage and analyze your spending</small>
-  </div>
-
   <ul class="nav flex-column">
-    @for (item of sidebarService.sidebarItems; track item) {
+    @for (item of sidebarService.sidebarItems; track item; let i = $index) {
       <li class="nav-item">
-        <a class="nav-link" (click)="sidebarService.navigate(item)" routerLinkActive="active" [ngClass]="{'active': item.id === sidebarService.activeItem}">
+        <a class="nav-link" (click)="sidebarService.navigate(item)" [ngClass]="{'active': sidebarService.activeIndex() === i}">
           <i [class]="item.icon"></i>
           <span class="ms-2">{{ item.label }}</span>
         </a>

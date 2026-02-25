@@ -8,12 +8,12 @@ namespace Budgetly.Infrastructure.Repositories
     {
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email); 
+            return await dbContext.Users.SingleAsync(u => u.Email == email); 
         }
 
         public async Task<User?> GetUserByIDAsync(int UserId)
         {
-            return await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == UserId);
+            return await dbContext.Users.SingleAsync(u => u.UserId == UserId);
         }
 
         public async Task<decimal> GetUserBalanceByIDAsync(int UserId)

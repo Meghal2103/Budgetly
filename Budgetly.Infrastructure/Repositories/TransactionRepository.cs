@@ -44,8 +44,8 @@ namespace Budgetly.Infrastructure.Repositories
 
             var query = dbContext.Transactions.Where(t => t.UserId == userId 
                                     && (string.IsNullOrWhiteSpace(searchText) || t.Title.Contains(searchText) || t.Notes.Contains(searchText))
-                                    && (transactionsRequestDTO.CategoryId == 0 || t.CategoryId == transactionsRequestDTO.CategoryId)
-                                    && (transactionsRequestDTO.TransactionTypeID == 0 || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID)
+                                    && (!transactionsRequestDTO.CategoryId.HasValue || t.CategoryId == transactionsRequestDTO.CategoryId)
+                                    && (!transactionsRequestDTO.TransactionTypeID.HasValue || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID)
                                     && (!startDate.HasValue || t.DateTime >= startDate)
                                     && (!endDate.HasValue || t.DateTime <= endDate))
                                     .AsNoTracking().AsQueryable();

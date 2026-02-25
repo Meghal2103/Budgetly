@@ -6,25 +6,34 @@ import { APIResponse } from '../models/api-response.model';
 import { TransactionType } from '../models/transaction/transaction-type.model';
 import { CategoryOption } from '../models/transaction/category.model';
 import {api} from "../enums/api.enum";
+import { SidebarService } from './sidebar.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class InitialDataService {
     private http: HttpClient = inject(HttpClient);
-    private transactionTypes: TransactionType[] = [];
-    private categories: CategoryOption[] = [];
+    private sidebarService = inject(SidebarService);
+    
+    private _categories = signal<CategoryOption[]>([]);
+    private _transactionTypes = signal<TransactionType[]>([]);
+    readonly categories = this._categories.asReadonly();
+    readonly transactionTypes = this._transactionTypes.asReadonly();
+    
     private isTransactionTypesLoaded = signal(false);
     private isCategoriesLoaded = signal(false);
-
     readonly areTransactionTypesLoaded = this.isTransactionTypesLoaded.asReadonly();
     readonly areCategoriesLoaded = this.isCategoriesLoaded.asReadonly();
 
-    initializeAppData(): Promise<void> {
-        return Promise.all([
-            firstValueFrom(this.loadCategories()),
-            firstValueFrom(this.loadTransactionTypes())
-        ]).then(() => {});
+
+    initializeAppData(): void {
+        this.sidebarService.appLoader = true;
+        this.loadCategories().subscribe({
+            error: (err) => console.error('Categories failed:', err)
+        });
+        this.loadTransactionTypes().subscribe({
+            error: (err) => console.error('Transaction types failed:', err)
+        });
     }
 
     loadTransactionTypes(): Observable<TransactionType[]> {
@@ -36,12 +45,13 @@ export class InitialDataService {
                     throw new Error(response.message || 'Invalid transaction types response');
                 }
 
-                this.transactionTypes = response.data.map(apiType => ({
+                this._transactionTypes.set(response.data.map(apiType => ({
                     transactionTypeID: apiType.transactionTypeID,
                     transactionTypeName: apiType.transactionTypeName
-                }));
+                })));
                 this.isTransactionTypesLoaded.set(true);
-                return this.transactionTypes;
+                this.sidebarService.appLoader = !this.isTransactionTypesLoaded() && !this.areCategoriesLoaded();
+                return this.transactionTypes();
             }),
             retry({
                 count: 3,
@@ -55,10 +65,6 @@ export class InitialDataService {
         );
     }
 
-    getTransactionTypes(): TransactionType[] {
-        return this.transactionTypes;
-    }
-
     loadCategories(): Observable<CategoryOption[]> {
         const url = `${environment.baseUrl}/${api.getCategories}`;
 
@@ -68,12 +74,13 @@ export class InitialDataService {
                     throw new Error(response.message || 'Invalid categories response');
                 }
 
-                this.categories = response.data.map(apiCategory => ({
+                this._categories.set(response.data.map(apiCategory => ({
                     categoryId: apiCategory.categoryId,
                     categoryName: apiCategory.categoryName
-                }));
+                })));
                 this.isCategoriesLoaded.set(true);
-                return this.categories;
+                this.sidebarService.appLoader = !this.isTransactionTypesLoaded() && !this.areCategoriesLoaded();
+                return this.categories();
             }),
             retry({
                 count: 3,
@@ -86,11 +93,5 @@ export class InitialDataService {
             })
         );
     }
-
-    getCategories(): CategoryOption[] {
-        return this.categories;
-    }
-
-    
 }
 

@@ -1,4 +1,5 @@
 export enum api {
+    signUP = '/api/Auth/sign-up',
     getTransaction = 'api/Transaction/get-transactions',
     getTransactionType = 'api/Transaction/get-transaction-type',
     getCategories = 'api/Transaction/get-categories',

@@ -10,6 +10,9 @@ import { PAGE_CONFIG } from '../core/config/page.config';
 import { APIResponse } from '../core/models/api-response.model';
 import { Subject, combineLatest, debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil } from 'rxjs';
 import { SlicePipe } from '@angular/common';
+import { MessageService } from 'primeng/api';
+import { SidebarService } from '../core/services/sidebar.service';
+import { SIDEBAR_ITEMS } from '../core/config/sidebar.config';
 
 @Component({
     selector: 'app-transactions',
@@ -22,19 +25,19 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private initialDataService = inject(InitialDataService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
+    private messageService = inject(MessageService);
+    private sidebarService = inject(SidebarService);
     private destroy$ = new Subject<void>();
     private totalCount: number = 0;
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
     netBalance = signal(0);
     pageBalance = signal(0);
-
-    // Transaction data
     allTransactions: Transaction[] = [];
     isLoading = signal(true);
     errorMessage: string = '';
 
-    categories: CategoryOption[] = this.initialDataService.getCategories();
-    transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
+    categories = this.initialDataService.categories;
+    transactionTypes = this.initialDataService.transactionTypes;
     searchForm: FormGroup = this.formBuilder.group({
         searchText: [''],
         categoryId: [0],
@@ -49,8 +52,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
-        categoryId: 0,
-        transactionTypeID: 0,
+        categoryId: null,
+        transactionTypeID: null,
         startDate: null,
         endDate: null,
         pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
@@ -65,8 +68,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
         this.transactionsRequestDTO = {
             searchText: formValue.searchText.trim() ?? '',
-            categoryId: formValue.categoryId,
-            transactionTypeID: formValue.transactionTypeId,
+            categoryId: formValue.categoryId === 0 ? null : formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
             startDate,
             endDate,
             pageSize: paginationValue.pageSize,
@@ -83,6 +86,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.sidebarService.activateElement(SIDEBAR_ITEMS[0]);
         this.searchForm.valueChanges
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
@@ -117,12 +121,20 @@ export class TransactionsComponent implements OnInit, OnDestroy {
                     this.paginationForm.get('pageSize')?.setValue(response.data.pageSize, { emitEvent: false });
                     this.ensurePageSizeOption(response.data.pageSize);
                 } else {
-                    this.errorMessage = response.message || 'Failed to load transactions';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: response.message || 'Failed to load transactions'
+                    });
                 }
                 this.isLoading.set(false);
             },
             error: (error) => {
-                this.errorMessage = error.message || 'An error occurred while loading transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'An error occurred while loading transactions'
+                });
                 this.isLoading.set(false);
             }
         });
@@ -135,8 +147,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
         return transactions.map(t => {
-            const category = this.categories.find(c => c.categoryId === t.categoryId);
-            const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
+            const category = this.categories().find(c => c.categoryId === t.categoryId);
+            const transactionType = this.transactionTypes().find(tt => tt.transactionTypeID === t.transactionTypeID);
 
             return {
                 id: t.transactionId,
@@ -153,15 +165,15 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     clearFilters(): void {
         this.searchForm.setValue({
             searchText: '',
-            categoryId: 0,
-            transactionTypeId: 0,
+            categoryId: null,
+            transactionTypeId: null,
             startDate: '',
             endDate: ''
         });
     }
 
     addTransaction(): void {
-        this.router.navigate(['/transactions/add-transaction']);
+        this.router.navigate(['/transactions/add-transaction'], { queryParams: { bulk: false } });
     }
 
     goToPage(page: number): void {
@@ -194,7 +206,11 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.transactionService.downloadTransactions(this.transactionsRequestDTO).subscribe({
             next: (blob) => this.triggerDownload(blob, 'transactions-filtered.xlsx'),
             error: (error) => {
-                this.errorMessage = error.message || 'Failed to download filtered transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'Failed to download filtered transactions'
+                });
             }
         });
     }
@@ -203,7 +219,11 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.transactionService.downloadAllTransactions().subscribe({
             next: (blob) => this.triggerDownload(blob, 'transactions-all.xlsx'),
             error: (error) => {
-                this.errorMessage = error.message || 'Failed to download all transactions';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: error.message || 'Failed to download all transactions'
+                });
             }
         });
     }

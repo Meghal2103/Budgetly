@@ -1,4 +1,5 @@
 using AutoMapper;
+using Budgetly.Application.Exceptions;
 using Budgetly.Core.DTOs.Transaction;
 using Budgetly.Core.Entities;
 using Budgetly.Core.Interfaces.Repository;
@@ -14,6 +15,10 @@ namespace Budgetly.Application.Services
         {
             var userId = currentUserService.UserId
                 ?? throw new UnauthorizedAccessException("User not authenticated.");
+            if (addEditTransaction.TransactionTypeID == 0)
+                throw new InvalidField("Transaction Type");
+            if (addEditTransaction.CategoryId == 0)
+                throw new InvalidField("Category Type");
             var transaction = mapper.Map<Transaction>(addEditTransaction);
             transaction.UserId = userId;
             await transactionRepository.AddTransactionAsync(transaction);
@@ -22,12 +27,24 @@ namespace Budgetly.Application.Services
       
         public async Task<List<TransactionType>> GetTransactionType()
         {
-            return await transactionRepository.GetTransactionType();
+            var transactionTypes = await transactionRepository.GetTransactionType();
+            transactionTypes.Insert(0, new TransactionType
+            {
+                TransactionTypeID = 0,
+                TransactionTypeName = "All Transaction Type"
+            });
+            return transactionTypes;
         }
 
         public async Task<List<Category>> GetCategories()
         {
-            return await transactionRepository.GetCategories();
+            var categories = await transactionRepository.GetCategories();
+            categories.Insert(0, new Category
+            {
+                CategoryId = 0,
+                CategoryName = "All Categories",
+            });
+            return categories;
         }
 
         public async Task<TransactionsDTO> GetTransactions()

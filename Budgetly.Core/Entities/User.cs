@@ -24,7 +24,7 @@ namespace Budgetly.Core.Entities
         public string LastName { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

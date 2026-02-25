@@ -18,21 +18,18 @@ export class TransactionService {
         return this.http.post<APIResponse<TransactionDTO>>(url, transaction).pipe(
             catchError((errorResponse: HttpErrorResponse) => {
                 const apiError: APIResponse<TransactionDTO> = errorResponse.error;
-                const errorMessage = apiError?.message || 'An error occurred while adding the transaction';
-                return throwError(() => new Error(errorMessage));
+                return throwError(() => new Error(apiError.message));
             })
         );
     }
 
     getTransactions(transactionsRequestDTO: TransactionsRequestDTO): Observable<APIResponse<TransactionsDTO>> {
         const url = `${environment.baseUrl}/${api.getTransaction}`;
-        console.log('Fetching transactions with payload:', transactionsRequestDTO); // Debug log
 
         return this.http.post<APIResponse<TransactionsDTO>>(url, transactionsRequestDTO).pipe(
             catchError((errorResponse: HttpErrorResponse) => {
                 const apiError: APIResponse<TransactionsDTO> = errorResponse.error;
-                const errorMessage = apiError?.message || 'An error occurred while fetching transactions';
-                return throwError(() => new Error(errorMessage));
+                return throwError(() => new Error(apiError.message));
             })
         );
     }
