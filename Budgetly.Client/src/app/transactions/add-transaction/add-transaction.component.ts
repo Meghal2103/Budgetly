@@ -45,17 +45,15 @@ export class AddTransactionComponent implements OnInit {
 
     errorMessage: string = '';
 
-    categories: CategoryOption[] = [];
-    transactionTypes: TransactionType[] = [];
+    categories = this.initialDataService.categories;
+    transactionTypes = this.initialDataService.transactionTypes;
     selectedTransactionType: 'cashOut' | 'cashIn' = 'cashIn';
     isbulk: boolean = true;
 
     ngOnInit(): void {
         this.sidebarService.activateElement(SIDEBAR_ITEMS[1]);
-        this.transactionTypes = this.initialDataService.getTransactionTypes();
-        this.categories = this.initialDataService.getCategories();
         this.route.queryParams.subscribe(params => {
-            this.isbulk = params['bulk'] === 'true';
+            this.isbulk = !(params['bulk'] === 'false');
         });
         this.setupAmountTypeSync();
     }

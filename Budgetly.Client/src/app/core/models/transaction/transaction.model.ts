@@ -30,8 +30,8 @@ export interface Transaction {
 
 export interface TransactionsRequestDTO {
     searchText: string;
-    categoryId: number;
-    transactionTypeID: number;
+    categoryId: number | null;
+    transactionTypeID: number | null;
     startDate: Date | null;
     endDate: Date | null;
     pageSize: number;

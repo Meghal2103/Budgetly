@@ -84,7 +84,7 @@
                                 [class.is-invalid]="isFieldInvalid('categoryId')" formControlName="categoryId"
                                 [disabled]="sidebarService.appLoader">
                                 <option value="">Select a category</option>
-                                @for (category of categories; track category) {
+                                @for (category of categories(); track category) {
                                 <option [value]="category.categoryId">
                                     {{ category.categoryName }}
                                 </option>
@@ -106,7 +106,7 @@
                                 [class.is-invalid]="isFieldInvalid('transactionTypeID')"
                                 formControlName="transactionTypeID" [disabled]="sidebarService.appLoader">
                                 <option value="">Select transaction type</option>
-                                @for (type of transactionTypes; track type) {
+                                @for (type of transactionTypes(); track type) {
                                 <option [value]="type.transactionTypeID">
                                     {{ type.transactionTypeName }}
                                 </option>

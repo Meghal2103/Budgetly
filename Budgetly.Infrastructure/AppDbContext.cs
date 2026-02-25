@@ -45,20 +45,6 @@ namespace Budgetly.Infrastructure
                 entity.HasIndex(e => e.TransactionTypeName).IsUnique();
             });
 
-            modelBuilder.Entity<Transaction>(entity =>
-            {
-                entity.ToTable(t =>
-                {
-                    t.HasCheckConstraint(
-                        "CK_Transactions_CategoryId_NotZero",
-                        "[CategoryId] <> 0");
-
-                    t.HasCheckConstraint(
-                        "CK_Transactions_TransactionTypeID_NotZero",
-                        "[TransactionTypeID] <> 0");
-                });
-            });
-
             modelBuilder.Entity<TransactionType>().HasData(
                 new TransactionType
                 {

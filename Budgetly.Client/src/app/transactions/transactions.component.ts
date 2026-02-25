@@ -32,14 +32,12 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     pageSizeArray = PAGE_CONFIG.PAGE_SIZES;
     netBalance = signal(0);
     pageBalance = signal(0);
-
-    // Transaction data
     allTransactions: Transaction[] = [];
     isLoading = signal(true);
     errorMessage: string = '';
 
-    categories: CategoryOption[] = this.initialDataService.getCategories();
-    transactionTypes: TransactionType[] = this.initialDataService.getTransactionTypes();
+    categories = this.initialDataService.categories;
+    transactionTypes = this.initialDataService.transactionTypes;
     searchForm: FormGroup = this.formBuilder.group({
         searchText: [''],
         categoryId: [0],
@@ -54,8 +52,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
-        categoryId: 0,
-        transactionTypeID: 0,
+        categoryId: null,
+        transactionTypeID: null,
         startDate: null,
         endDate: null,
         pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
@@ -70,8 +68,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
         this.transactionsRequestDTO = {
             searchText: formValue.searchText.trim() ?? '',
-            categoryId: formValue.categoryId,
-            transactionTypeID: formValue.transactionTypeId,
+            categoryId: formValue.categoryId === 0 ? null : formValue.categoryId,
+            transactionTypeID: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
             startDate,
             endDate,
             pageSize: paginationValue.pageSize,
@@ -149,8 +147,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
         return transactions.map(t => {
-            const category = this.categories.find(c => c.categoryId === t.categoryId);
-            const transactionType = this.transactionTypes.find(tt => tt.transactionTypeID === t.transactionTypeID);
+            const category = this.categories().find(c => c.categoryId === t.categoryId);
+            const transactionType = this.transactionTypes().find(tt => tt.transactionTypeID === t.transactionTypeID);
 
             return {
                 id: t.transactionId,
@@ -167,8 +165,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     clearFilters(): void {
         this.searchForm.setValue({
             searchText: '',
-            categoryId: 0,
-            transactionTypeId: 0,
+            categoryId: null,
+            transactionTypeId: null,
             startDate: '',
             endDate: ''
         });
