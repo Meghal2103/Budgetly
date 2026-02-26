@@ -98,7 +98,7 @@
                                 formControlName="transactionTypeID" [disabled]="sidebarService.appLoader">
                                 <option value="" disabled>Select transaction type</option>
                                 @for (type of transactionTypes(); track type) {
-                                <option [value]="type.transactionTypeID">
+                                <option [value]="type.transactionTypeId">
                                     {{ type.transactionTypeName }}
                                 </option>
                                 }

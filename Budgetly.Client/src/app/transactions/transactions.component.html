@@ -45,8 +45,8 @@
                     <div class="col-md-2">
                         <label class="form-label small text-muted">Transaction Type</label>
                         <select class="form-select" formControlName="transactionTypeId">
-                            @for (mode of transactionTypes(); track mode.transactionTypeID) {
-                            <option [ngValue]="mode.transactionTypeID">
+                            @for (mode of transactionTypes(); track mode.transactionTypeId) {
+                            <option [ngValue]="mode.transactionTypeId">
                                 {{ mode.transactionTypeName }}
                             </option>
                             }

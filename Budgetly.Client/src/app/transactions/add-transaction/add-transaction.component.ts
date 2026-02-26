@@ -44,7 +44,7 @@ export class AddTransactionComponent implements OnInit {
     });
 
     categories = computed(() => this.initialDataService.categories().filter(c => c.categoryId !== 0));
-    transactionTypes = computed(() => this.initialDataService.transactionTypes().filter(t => t.transactionTypeID !== 0));
+    transactionTypes = computed(() => this.initialDataService.transactionTypes().filter(t => t.transactionTypeId !== 0));
     selectedTransactionType: 'cashOut' | 'cashIn' = 'cashIn';
     isbulk: boolean = true;
 

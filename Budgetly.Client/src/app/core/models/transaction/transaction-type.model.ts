@@ -1,4 +1,4 @@
 export interface TransactionType {
-    transactionTypeID: number;
+    transactionTypeId: number;
     transactionTypeName: string;
 }

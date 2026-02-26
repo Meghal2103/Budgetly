@@ -148,7 +148,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
         return transactions.map(t => {
             const category = this.categories().find(c => c.categoryId === t.categoryId);
-            const transactionType = this.transactionTypes().find(tt => tt.transactionTypeID === t.transactionTypeID);
+            const transactionType = this.transactionTypes().find(tt => tt.transactionTypeId === t.transactionTypeID);
 
             return {
                 id: t.transactionId,

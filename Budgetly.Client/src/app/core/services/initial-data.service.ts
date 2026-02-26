@@ -46,7 +46,7 @@ export class InitialDataService {
                 }
 
                 this._transactionTypes.set(response.data.map(apiType => ({
-                    transactionTypeID: apiType.transactionTypeID,
+                    transactionTypeId: apiType.transactionTypeId,
                     transactionTypeName: apiType.transactionTypeName
                 })));
                 this.isTransactionTypesLoaded.set(true);
