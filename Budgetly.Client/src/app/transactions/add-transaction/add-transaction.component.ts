@@ -66,7 +66,7 @@ export class AddTransactionComponent implements OnInit {
             const transactionData: AddTransactionRequest = {
                 title: formValue.title.trim(),
                 categoryId: parseInt(formValue.categoryId, 10),
-                transactionTypeID: parseInt(formValue.transactionTypeID, 10),
+                transactionTypeId: parseInt(formValue.transactionTypeID, 10),
                 dateTime: dateTime,
                 amount: parseFloat(formValue.amount),
                 notes: formValue.notes || ''

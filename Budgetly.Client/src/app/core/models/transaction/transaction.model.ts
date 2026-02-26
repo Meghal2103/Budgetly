@@ -3,7 +3,7 @@ export interface TransactionDTO {
     title: string;
     userId: number;
     categoryId: number;
-    transactionTypeID: number;
+    transactionTypeId: number;
     dateTime: string;
     amount: number;
     notes: string;
@@ -12,7 +12,7 @@ export interface TransactionDTO {
 export interface AddTransactionRequest {
     title: string;
     categoryId: number;
-    transactionTypeID: number;
+    transactionTypeId: number;
     dateTime: string;
     amount: number;
     notes: string;
@@ -31,7 +31,7 @@ export interface Transaction {
 export interface TransactionsRequestDTO {
     searchText: string;
     categoryId: number | null;
-    transactionTypeID: number | null;
+    transactionTypeId: number | null;
     startDate: Date | null;
     endDate: Date | null;
     pageSize: number;

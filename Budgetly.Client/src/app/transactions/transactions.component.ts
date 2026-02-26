@@ -53,7 +53,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     transactionsRequestDTO: TransactionsRequestDTO = {
         searchText: '',
         categoryId: null,
-        transactionTypeID: null,
+        transactionTypeId: null,
         startDate: null,
         endDate: null,
         pageSize: PAGE_CONFIG.DEFAULT_PAGE_SIZE,
@@ -69,7 +69,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.transactionsRequestDTO = {
             searchText: formValue.searchText.trim() ?? '',
             categoryId: formValue.categoryId === 0 ? null : formValue.categoryId,
-            transactionTypeID: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
+            transactionTypeId: formValue.transactionTypeId === 0 ? null : formValue.transactionTypeId,
             startDate,
             endDate,
             pageSize: paginationValue.pageSize,
@@ -113,7 +113,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         ).subscribe({
             next: (response: APIResponse<TransactionsDTO>) => {
                 if (response.success && response.data) {
-                    this.allTransactions = this.mapTransactions(response.data.transactions);
+                    this.allTransactions = this.transactionService.mapTransactions(response.data.transactions, this.categories(), this.transactionTypes());
                     this.totalCount = response.data.totalCount;
                     this.netBalance.set(response.data.netBalance);
                     this.pageBalance.set(response.data.pageBalance);
@@ -143,23 +143,6 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
-    }
-
-    private mapTransactions(transactions: TransactionDTO[]): Transaction[] {
-        return transactions.map(t => {
-            const category = this.categories().find(c => c.categoryId === t.categoryId);
-            const transactionType = this.transactionTypes().find(tt => tt.transactionTypeId === t.transactionTypeID);
-
-            return {
-                id: t.transactionId,
-                title: t.title,
-                amount: t.amount,
-                category: category?.categoryName || 'Unknown',
-                transactionType: transactionType?.transactionTypeName || 'Unknown',
-                date: new Date(t.dateTime),
-                notes: t.notes || undefined
-            };
-        });
     }
 
     clearFilters(): void {

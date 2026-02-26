@@ -60,7 +60,7 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("get-transactions-detail/{transactionID}")]
+        [HttpGet("get-transactions-details/{transactionID}")]
         public async Task<IActionResult> GetTransactionsDetail([FromRoute] int transactionID)
         {
             APIResponse<TransactionViewModel> response = new();
