@@ -1,6 +1,7 @@
 using Budgetly.Core.DTOs.Transaction;
 using Budgetly.Core.Entities;
 using Budgetly.Core.Interfaces.Repository;
+using Budgetly.Core.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Budgetly.Infrastructure.Repositories
@@ -63,5 +64,11 @@ namespace Budgetly.Infrastructure.Repositories
 
             return (totalCount, pageBalance, transactions);
         }
+
+        public async Task<Transaction?> GetTransactionsDetails(int userId, int transactionID)
+        {
+            return await dbContext.Transactions.FirstOrDefaultAsync(t => t.UserId == userId && t.TransactionId == transactionID);
+        }
+
     }
 }

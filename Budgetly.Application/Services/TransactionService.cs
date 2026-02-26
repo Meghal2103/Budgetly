@@ -81,6 +81,16 @@ namespace Budgetly.Application.Services
             return transactionsDTO;
         }
 
+        public async Task<TransactionViewModel> GetTransactionsDetails(int transactionID)
+        {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
+            TransactionViewModel transactionViewModel = new();
+            transactionViewModel = mapper.Map<TransactionViewModel>(await transactionRepository.GetTransactionsDetails(userId, transactionID));
+
+            return transactionViewModel;
+        }
+
         public async Task<byte[]> ExportAllTransactionsExcel()
         {
             var userId = currentUserService.UserId
