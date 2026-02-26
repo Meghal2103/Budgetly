@@ -57,6 +57,17 @@ export class TransactionService {
         );
     }
 
+    deleteTransaction(transactionsId: number): Observable<APIResponse<void>> {
+        const url = `${environment.baseUrl}/${api.deleteTransaction}/${transactionsId}`;
+
+        return this.http.delete<APIResponse<void>>(url).pipe(
+            catchError((errorResponse: HttpErrorResponse) => {
+                const apiError: APIResponse<void> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
+            })
+        );
+    }
+
     public mapTransactions(transactions: TransactionDTO[], categories: CategoryOption[], transactionTypes: TransactionType[]): Transaction[] {
         return transactions.map(t => this.mapTransaction(t, categories, transactionTypes));
     }

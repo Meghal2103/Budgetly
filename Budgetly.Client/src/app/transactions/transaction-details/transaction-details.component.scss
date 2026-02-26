@@ -107,6 +107,95 @@
     }
 }
 
+.delete-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 1040;
+}
+
+.delete-confirm-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 1050;
+}
+
+.delete-confirm-card {
+    width: min(520px, 100%);
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.delete-confirm-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+
+    h5 {
+        color: #111827;
+        font-weight: 600;
+    }
+}
+
+.delete-confirm-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(220, 38, 38, 0.12);
+    color: #dc2626;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+}
+
+.delete-confirm-body {
+    .delete-confirm-summary {
+        padding: 1rem;
+        border-radius: 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+    }
+
+    .summary-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.35rem;
+    }
+
+    .summary-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.85rem;
+
+        .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 999px;
+            background: #9ca3af;
+            display: inline-block;
+        }
+    }
+}
+
+.delete-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
 @media (max-width: 768px) {
     .header-section {
         .action-buttons {
@@ -117,6 +206,19 @@
             .btn {
                 width: 100%;
             }
+        }
+    }
+
+    .delete-confirm-card {
+        padding: 1.5rem;
+    }
+
+    .delete-confirm-actions {
+        flex-direction: column;
+        align-items: stretch;
+
+        .btn {
+            width: 100%;
         }
     }
 }

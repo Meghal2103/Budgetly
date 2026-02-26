@@ -31,7 +31,7 @@ namespace Budgetly.Infrastructure
 
                 entity.HasOne(t => t.TransactionType)
                     .WithMany(t => t.Transactions)
-                    .HasForeignKey(t => t.TransactionTypeID)
+                    .HasForeignKey(t => t.TransactionTypeId)
                     .OnDelete(DeleteBehavior.Restrict); 
             });
 
@@ -48,17 +48,17 @@ namespace Budgetly.Infrastructure
             modelBuilder.Entity<TransactionType>().HasData(
                 new TransactionType
                 {
-                    TransactionTypeID = 1,
+                    TransactionTypeId = 1,
                     TransactionTypeName = "UPI"
                 },
                 new TransactionType
                 {
-                    TransactionTypeID = 2,
+                    TransactionTypeId = 2,
                     TransactionTypeName = "Card"
                 },
                 new TransactionType
                 {
-                    TransactionTypeID = 3,
+                    TransactionTypeId = 3,
                     TransactionTypeName = "Cash"
                 }
             );

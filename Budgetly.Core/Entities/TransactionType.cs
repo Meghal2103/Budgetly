@@ -8,7 +8,7 @@ namespace Budgetly.Core.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int TransactionTypeID { get; set; }
+        public int TransactionTypeId { get; set; }
 
         [Required]
         [StringLength(100)]

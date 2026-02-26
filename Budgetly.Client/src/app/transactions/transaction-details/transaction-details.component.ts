@@ -28,6 +28,7 @@ export class TransactionDetailsComponent implements OnInit {
     private destroy$ = new Subject<void>();
     readonly categories = this.initialDataService.categories;
     readonly transactionTypes = this.initialDataService.transactionTypes;
+    public isDeleteModalOpen = false;
 
     transaction: Transaction = {
         id: 0,
@@ -58,7 +59,6 @@ export class TransactionDetailsComponent implements OnInit {
     private loadTransaction(transactionId: number): void {
         this.sidebarService.appLoader = true;
         this.transactionService.getTransactionsDetails(transactionId)
-            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response: APIResponse<TransactionDTO>) => {
                     if (response.success && response.data) {
@@ -93,12 +93,39 @@ export class TransactionDetailsComponent implements OnInit {
     }
 
     onDelete(): void {
-        if (confirm('Are you sure you want to delete this transaction?')) {
-            // TODO: Call API to delete transaction
-            console.log('Deleting transaction:', this.transaction.id);
-            alert('Transaction deleted successfully!');
-            this.router.navigate([routes.viewTransactions]);
-        }
+        this.isDeleteModalOpen = true;
+    }
+
+    closeDeleteModal(): void {
+        this.isDeleteModalOpen = false;
+    }
+
+    confirmDelete(): void {
+        this.isDeleteModalOpen = false;
+        this.sidebarService.appLoader = true;
+        this.transactionService.deleteTransaction(this.transaction.id)
+            .subscribe({
+                next: (response: APIResponse<void>) => {
+                    if (response.success) {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Success',
+                            detail: response.message || 'Transaction deleted successfully.'
+                        });
+                        this.router.navigate([routes.viewTransactions]);
+                    }
+                    this.sidebarService.appLoader = false;
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: error.message || 'An error occurred while deleting transaction'
+                    });  
+                    this.sidebarService.appLoader = false;  
+                    this.router.navigate([routes.viewTransactions]);            
+                }
+            });
     }
 
     formatCurrency(amount: number): string {

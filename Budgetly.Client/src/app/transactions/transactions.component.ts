@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TransactionService } from '../core/services/transaction.service';
 import { InitialDataService } from '../core/services/initial-data.service';
-import { TransactionDTO, Transaction, TransactionsRequestDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
+import { Transaction, TransactionsRequestDTO, TransactionsDTO } from '../core/models/transaction/transaction.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CategoryOption } from '../core/models/transaction/category.model';
 import { TransactionType } from '../core/models/transaction/transaction-type.model';
@@ -148,8 +148,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     clearFilters(): void {
         this.searchForm.setValue({
             searchText: '',
-            categoryId: null,
-            transactionTypeId: null,
+            categoryId: 0,
+            transactionTypeId: 0,
             startDate: '',
             endDate: ''
         });

@@ -75,7 +75,7 @@ export class AddTransactionComponent implements OnInit {
             this.transactionService.addTransaction(transactionData).subscribe({
                 next: (response) => {
                     this.sidebarService.appLoader = false;
-                    if (response.success && this.isbulk) {
+                    if (response.success) {
                         this.messageService.add({
                             severity: 'success',
                             summary: 'Success',

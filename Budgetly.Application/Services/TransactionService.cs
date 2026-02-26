@@ -15,7 +15,7 @@ namespace Budgetly.Application.Services
         {
             var userId = currentUserService.UserId
                 ?? throw new UnauthorizedAccessException("User not authenticated.");
-            if (addEditTransaction.TransactionTypeID == 0)
+            if (addEditTransaction.TransactionTypeId == 0)
                 throw new InvalidField("Transaction Type");
             if (addEditTransaction.CategoryId == 0)
                 throw new InvalidField("Category Type");
@@ -30,7 +30,7 @@ namespace Budgetly.Application.Services
             var transactionTypes = await transactionRepository.GetTransactionType();
             transactionTypes.Insert(0, new TransactionType
             {
-                TransactionTypeID = 0,
+                TransactionTypeId = 0,
                 TransactionTypeName = "All Transaction Type"
             });
             return transactionTypes;
@@ -86,9 +86,22 @@ namespace Budgetly.Application.Services
             var userId = currentUserService.UserId
                 ?? throw new UnauthorizedAccessException("User not authenticated.");
             TransactionViewModel transactionViewModel = new();
-            transactionViewModel = mapper.Map<TransactionViewModel>(await transactionRepository.GetTransactionsDetails(userId, transactionID));
+            var result = await transactionRepository.GetTransactionsDetails(userId, transactionID);
+            if (result == null)
+                throw new TransctionNotFound();
+            transactionViewModel = mapper.Map<TransactionViewModel>(result);
 
             return transactionViewModel;
+        }
+
+        public async Task<bool> DeleteTransaction(int transactionID)
+        {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
+            var result = await transactionRepository.DeleteTransaction(userId, transactionID);
+            if(result == false)
+                throw new TransctionNotFound();
+            return true;
         }
 
         public async Task<byte[]> ExportAllTransactionsExcel()
@@ -117,7 +130,7 @@ namespace Budgetly.Application.Services
             worksheet.Cell(2, 1).Value = "Date";
             worksheet.Cell(2, 2).Value = "Title";
             worksheet.Cell(2, 3).Value = "CategoryId";
-            worksheet.Cell(2, 4).Value = "TransactionTypeID";
+            worksheet.Cell(2, 4).Value = "TransactionTypeId";
             worksheet.Cell(2, 5).Value = "Amount";
             worksheet.Cell(2, 6).Value = "Notes";
 
@@ -128,7 +141,7 @@ namespace Budgetly.Application.Services
                 worksheet.Cell(row, 1).Style.DateFormat.Format = "yyyy-MM-dd HH:mm";
                 worksheet.Cell(row, 2).Value = transaction.Title;
                 worksheet.Cell(row, 3).Value = transaction.CategoryId;
-                worksheet.Cell(row, 4).Value = transaction.TransactionTypeID;
+                worksheet.Cell(row, 4).Value = transaction.TransactionTypeId;
                 worksheet.Cell(row, 5).Value = transaction.Amount;
                 worksheet.Cell(row, 6).Value = transaction.Notes;
                 row++;

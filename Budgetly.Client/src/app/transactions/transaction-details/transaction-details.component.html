@@ -4,13 +4,13 @@
         <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onBack()">
             <i class="bi bi-arrow-left me-2"></i>Back to Transactions
         </button>
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
                 <h2 class="mb-2">Transaction Details</h2>
-                <p class="text-muted mb-0">View complete transaction information</p>
+                <p class="text-muted mb-0">Review this transaction at a glance</p>
             </div>
-            <div class="action-buttons">
-                <button class="btn btn-outline-primary me-2" (click)="onEdit()">
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-outline-primary" (click)="onEdit()">
                     <i class="bi bi-pencil me-2"></i>Edit
                 </button>
                 <button class="btn btn-outline-danger" (click)="onDelete()">
@@ -24,56 +24,100 @@
     @if (transaction) {
     <div class="details-section">
         <div class="row g-4">
-            <!-- Main Details Card -->
-            <div class="col-md-8">
+            <div class="col-lg-8">
                 <div class="card h-100">
-                    <div class="card-header">
+                    <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
                         <h5 class="mb-0">Transaction Information</h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-secondary">{{ transaction.category }}</span>
+                            <span class="badge bg-info">{{ transaction.transactionType }}</span>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <!-- Description -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i class="bi bi-receipt me-2"></i>Description
-                            </div>
-                            <div class="detail-value">
-                                {{ transaction.notes }}
-                            </div>
+                        <div class="mb-4">
+                            <div class="text-muted small mb-1">Title</div>
+                            <div class="fw-semibold fs-5">{{ transaction.title }}</div>
                         </div>
-                        <!-- Amount -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-label">
-                                <i class="bi bi-cash-stack me-2"></i>Amount
-                            </div>
-                            <div class="detail-value amount-value">
-                                {{ formatCurrency(transaction.amount) }}
-                            </div>
+                        <div class="mb-4">
+                            <div class="text-muted small mb-1">Amount</div>
+                            <div class="fw-semibold fs-4">{{ formatCurrency(transaction.amount) }}</div>
                         </div>
-                        <!-- Category -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-value">
-                                <span class="badge bg-primary">{{ transaction.category }}</span>
-                            </div>
+                        <div class="mb-4">
+                            <div class="text-muted small mb-1">Notes</div>
+                            @if (transaction.notes) {
+                                <div>{{ transaction.notes }}</div>
+                            }
+                            @if (!transaction.notes) {
+                                <div class="text-muted">-</div>
+                            }
                         </div>
-                        <!-- Payment Mode -->
-                        <div class="detail-item mb-4">
-                            <div class="detail-value">
-                                <span class="badge bg-info">{{ transaction.transactionType }}</span>
-                            </div>
-                        </div>
-                        <!-- Date & Time -->
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="bi bi-calendar-event me-2"></i>Date & Time
-                            </div>
-                            <div class="detail-value">
-                                {{ formatDateTime(transaction.date) }}
-                            </div>
+                        <div>
+                            <div class="text-muted small mb-1">Date & Time</div>
+                            <div>{{ formatDateTime(transaction.date) }}</div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h6 class="mb-0">Quick Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted small">Category</span>
+                            <span class="badge bg-secondary">{{ transaction.category }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted small">Transaction Type</span>
+                            <span class="badge bg-info">{{ transaction.transactionType }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted small">Amount</span>
+                            <span class="fw-semibold">{{ formatCurrency(transaction.amount) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Date</span>
+                            <span class="fw-semibold">{{ formatDateTime(transaction.date) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 
+    @if (isDeleteModalOpen) {
+    <div class="delete-confirm-backdrop" (click)="closeDeleteModal()"></div>
+    <div class="delete-confirm-modal" role="dialog" aria-modal="true" aria-label="Confirm delete transaction">
+        <div class="delete-confirm-card">
+            <div class="delete-confirm-header">
+                <div class="delete-confirm-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Delete this transaction?</h5>
+                    <p class="mb-0 text-muted small">This action cannot be undone.</p>
+                </div>
+            </div>
+            <div class="delete-confirm-body">
+                <div class="delete-confirm-summary">
+                    <div class="summary-title">{{ transaction.title || 'Untitled transaction' }}</div>
+                    <div class="summary-meta">
+                        <span>{{ formatCurrency(transaction.amount) }}</span>
+                        <span class="dot"></span>
+                        <span>{{ formatDateTime(transaction.date) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="delete-confirm-actions">
+                <button class="btn btn-outline-secondary" (click)="closeDeleteModal()">
+                    Cancel
+                </button>
+                <button class="btn btn-danger" (click)="confirmDelete()">
+                    Delete transaction
+                </button>
+            </div>
         </div>
     </div>
     }

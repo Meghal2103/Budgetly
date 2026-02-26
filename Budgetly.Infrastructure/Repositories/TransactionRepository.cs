@@ -46,7 +46,7 @@ namespace Budgetly.Infrastructure.Repositories
             var query = dbContext.Transactions.Where(t => t.UserId == userId 
                                     && (string.IsNullOrWhiteSpace(searchText) || t.Title.Contains(searchText) || t.Notes.Contains(searchText))
                                     && (!transactionsRequestDTO.CategoryId.HasValue || t.CategoryId == transactionsRequestDTO.CategoryId)
-                                    && (!transactionsRequestDTO.TransactionTypeID.HasValue || t.TransactionTypeID == transactionsRequestDTO.TransactionTypeID)
+                                    && (!transactionsRequestDTO.TransactionTypeId.HasValue || t.TransactionTypeId == transactionsRequestDTO.TransactionTypeId)
                                     && (!startDate.HasValue || t.DateTime >= startDate)
                                     && (!endDate.HasValue || t.DateTime <= endDate))
                                     .AsNoTracking().AsQueryable();
@@ -70,5 +70,14 @@ namespace Budgetly.Infrastructure.Repositories
             return await dbContext.Transactions.FirstOrDefaultAsync(t => t.UserId == userId && t.TransactionId == transactionID);
         }
 
+        public async Task<bool> DeleteTransaction(int userId, int transactionID)
+        {
+            var transaction = await dbContext.Transactions.FirstOrDefaultAsync(t => t.UserId == userId && t.TransactionId == transactionID);
+            if (transaction == null)
+                return false;
+            dbContext.Transactions.Remove(transaction);
+            await dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

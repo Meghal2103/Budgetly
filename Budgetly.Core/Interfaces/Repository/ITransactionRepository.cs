@@ -13,5 +13,6 @@ namespace Budgetly.Core.Interfaces.Repository
         Task<(int count, List<Transaction>)> GetTransactions(int userId);
         Task<(int count, decimal pageBalance, List<Transaction>)> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO, int userId);
         Task<Transaction?> GetTransactionsDetails(int UserId, int transactionID);
+        Task<bool> DeleteTransaction(int userId, int transactionID);
     }
 }

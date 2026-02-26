@@ -13,7 +13,7 @@ namespace Budgetly.Core.DTOs.Transaction
         public int CategoryId { get; set; }
 
         [Required]
-        public int TransactionTypeID { get; set; }
+        public int TransactionTypeId { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

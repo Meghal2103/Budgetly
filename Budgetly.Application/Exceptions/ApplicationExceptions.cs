@@ -16,4 +16,9 @@ namespace Budgetly.Application.Exceptions
     {
 
     }
+
+    public class TransctionNotFound() : Exception($"Requested Transaction was not found")
+    {
+
+    }
 }

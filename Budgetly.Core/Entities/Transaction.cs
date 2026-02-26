@@ -21,7 +21,7 @@ namespace Budgetly.Core.Entities
         public required Category Category { get; set; }
 
         [Required]
-        public int TransactionTypeID { get; set; }
+        public int TransactionTypeId { get; set; }
         public required TransactionType TransactionType { get; set; }
 
         [Required]

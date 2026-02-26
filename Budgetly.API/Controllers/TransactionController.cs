@@ -73,6 +73,18 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
+        [HttpDelete("delete-transaction/{transactionID}")]
+        public async Task<IActionResult> DeleteTransactions([FromRoute] int transactionID)
+        {
+            APIResponse<object> response = new();
+
+            await transactionService.DeleteTransaction(transactionID);
+            response.Success = true;
+            response.Message = "Transaction deleted successfully.";
+
+            return Ok(response);
+        }
+
         [HttpGet("export-all-transactions")]
         public async Task<IActionResult> ExportAllTransactions()
         {

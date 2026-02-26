@@ -13,7 +13,7 @@ namespace Budgetly.Core.ViewModel
 
         public int CategoryId { get; set; }
 
-        public int TransactionTypeID { get; set; }
+        public int TransactionTypeId { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime DateTime { get; set; }
