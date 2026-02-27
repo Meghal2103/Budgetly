@@ -6,6 +6,7 @@ export enum api {
     deleteTransaction = 'api/Transaction/delete-transaction',
     getCategories = 'api/Transaction/get-categories',
     addTransaction = 'api/Transaction/add-transaction',
+    editTransaction = 'api/Transaction/edit-transaction',
     downloadAllTransactions = 'api/Transaction/export-all-transactions',
     downloadTransactions = 'api/Transaction/export-transactions'
 }

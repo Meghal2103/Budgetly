@@ -25,6 +25,17 @@ export class TransactionService {
         );
     }
 
+    editTransaction(transactionId: number, transaction: AddTransactionRequest): Observable<APIResponse<TransactionDTO>> {
+        const url = `${environment.baseUrl}/${api.editTransaction}/${transactionId}`;
+
+        return this.http.put<APIResponse<TransactionDTO>>(url, transaction).pipe(
+            catchError((errorResponse: HttpErrorResponse) => {
+                const apiError: APIResponse<TransactionDTO> = errorResponse.error;
+                return throwError(() => new Error(apiError.message));
+            })
+        );
+    }
+
     getTransactions(transactionsRequestDTO: TransactionsRequestDTO): Observable<APIResponse<TransactionsDTO>> {
         const url = `${environment.baseUrl}/${api.getTransaction}`;
 
@@ -72,7 +83,7 @@ export class TransactionService {
         return transactions.map(t => this.mapTransaction(t, categories, transactionTypes));
     }
 
-    public mapTransaction(transactions: TransactionDTO, categories: CategoryOption[], transactionTypes: TransactionType[]): Transaction{
+    public mapTransaction(transactions: TransactionDTO, categories: CategoryOption[], transactionTypes: TransactionType[]): Transaction {
         const category = categories.find(c => c.categoryId === transactions.categoryId);
         const transactionType = transactionTypes.find(tt => tt.transactionTypeId === transactions.transactionTypeId);
 

@@ -7,5 +7,6 @@ import { TransactionDetailsComponent } from './transaction-details/transaction-d
 export const routes: Routes = [
     { path: '', component: TransactionsComponent },
     { path: 'add-transaction', component: AddTransactionComponent },
+    { path: 'edit/:id', component: AddTransactionComponent },
     { path: 'details/:id', component: TransactionDetailsComponent }
 ];

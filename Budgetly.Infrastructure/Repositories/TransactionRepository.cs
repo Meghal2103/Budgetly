@@ -79,5 +79,26 @@ namespace Budgetly.Infrastructure.Repositories
             await dbContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Transaction?> UpdateTransactionAsync(int userId, int transactionId, AddEditTransaction dto)
+        {
+            var transaction = await dbContext.Transactions.FirstOrDefaultAsync(t => t.UserId == userId && t.TransactionId == transactionId);
+            if (transaction == null)
+                return null;
+
+            var user = await userRepository.GetUserByIDAsync(userId);
+            user.Balance -= transaction.Amount;
+            user.Balance += dto.Amount;
+
+            transaction.Title = dto.Title;
+            transaction.CategoryId = dto.CategoryId;
+            transaction.TransactionTypeId = dto.TransactionTypeId;
+            transaction.DateTime = dto.DateTime;
+            transaction.Amount = dto.Amount;
+            transaction.Notes = dto.Notes;
+
+            await dbContext.SaveChangesAsync();
+            return transaction;
+        }
     }
 }

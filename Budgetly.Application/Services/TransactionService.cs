@@ -104,6 +104,22 @@ namespace Budgetly.Application.Services
             return true;
         }
 
+        public async Task<TransactionViewModel> UpdateTransaction(int transactionId, AddEditTransaction addEditTransaction)
+        {
+            var userId = currentUserService.UserId
+                ?? throw new UnauthorizedAccessException("User not authenticated.");
+            if (addEditTransaction.TransactionTypeId == 0)
+                throw new InvalidField("Transaction Type");
+            if (addEditTransaction.CategoryId == 0)
+                throw new InvalidField("Category Type");
+
+            var result = await transactionRepository.UpdateTransactionAsync(userId, transactionId, addEditTransaction);
+            if (result == null)
+                throw new TransctionNotFound();
+
+            return mapper.Map<TransactionViewModel>(result);
+        }
+
         public async Task<byte[]> ExportAllTransactionsExcel()
         {
             var userId = currentUserService.UserId

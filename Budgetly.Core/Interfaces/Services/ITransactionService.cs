@@ -13,6 +13,7 @@ namespace Budgetly.Core.Interfaces.Services
         Task<TransactionsDTO> RequestTransactions(TransactionsRequestDTO transactionsRequestDTO);
         Task<TransactionViewModel> GetTransactionsDetails(int transactionID);
         Task<bool> DeleteTransaction(int transactionID);
+        Task<TransactionViewModel> UpdateTransaction(int transactionId, AddEditTransaction dto);
         Task<byte[]> ExportAllTransactionsExcel();
         Task<byte[]> ExportTransactionsExcel(TransactionsRequestDTO transactionsRequestDTO);
     }

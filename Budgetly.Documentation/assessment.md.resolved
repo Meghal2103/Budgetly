@@ -1,0 +1,109 @@
+# Budgetly — Honest Project Assessment
+
+## Overall Verdict: Solid Foundation, Needs Maturity
+
+You have a **working full-stack personal finance tracker** with a well-structured backend and a functional Angular frontend. The architecture choices are good for a learning/portfolio project. Below is a detailed, honest breakdown.
+
+---
+
+## ✅ What You're Doing Well
+
+### 1. Clean Architecture (Backend)
+The 4-project separation (`Core` → `Application` → `Infrastructure` → [API](file:///d:/Budgetly/Budgetly.API/Models/APIResponse.cs#3-19)) is textbook Clean Architecture. Dependency flow is correct — `Core` has no external dependencies and everything else depends inward. This is genuinely impressive for a WIP project.
+
+### 2. Proper DI Registration Pattern
+Each layer has its own [DependencyInjection.cs](file:///d:/Budgetly/Budgetly.API/DependencyInjection.cs) with extension methods that chain together. Clean, idiomatic .NET.
+
+### 3. Global Exception Handling Middleware
+The [ExceptionHandlingMiddleware](file:///d:/Budgetly/Budgetly.API/Middleware/ExceptionHandlingMiddleware.cs#8-46) maps custom exceptions (`UserAlreadyExistsException`, `UserNotFoundException`) to appropriate HTTP status codes. This is a pattern many junior devs miss.
+
+### 4. Frontend Structure
+The Angular client is well-organized with:
+- Feature-based modules (`auth/`, `transactions/`, `analysis/`)
+- Shared components, guards, interceptors, services in `core/`
+- Lazy-loaded routes for `transactions` and `analysis`
+- Route guards (`loggedInGuard`)
+
+### 5. Useful Features Already Built
+- Full CRUD for transactions (add, get, get-details, delete)
+- Search/filter with pagination ([RequestTransactions](file:///d:/Budgetly/Budgetly.Application/Services/TransactionService.cs#64-83))
+- Excel export via ClosedXML ([ExportAllTransactionsExcel](file:///d:/Budgetly/Budgetly.Application/Services/TransactionService.cs#107-115), [ExportTransactionsExcel](file:///d:/Budgetly/Budgetly.Application/Services/TransactionService.cs#116-124))
+- Analysis/charting module with Chart.js
+- JWT authentication flow
+
+---
+
+## ⚠️ Areas That Need Work
+
+### 1. Security — Critical Issues
+
+| Issue | Severity | Details |
+|---|---|---|
+| **SHA256 for passwords** | 🔴 High | You're using `SHA256` + salt for password hashing. This is **not** production-safe. SHA256 is a fast hash — use `bcrypt`, `Argon2`, or at minimum `PBKDF2` (built into .NET via `Rfc2898DeriveBytes`). |
+| **JWT secret in appsettings.json** | 🔴 High | `z8PbV+PqjZK1aVJzRz1uVzR0+bb5u3AXRhq5OH6u2hA=` is committed to source control. Use User Secrets for dev and environment variables for production. |
+| **Machine name in connection string** | 🟡 Medium | `Server=MEGHAL-F15\\SQLEXPRESS` is a personal machine name in committed config. This should be in User Secrets. |
+| **24-hour JWT expiry, no refresh tokens** | 🟡 Medium | Long-lived tokens without a refresh mechanism. Consider shorter access tokens + refresh tokens. |
+
+### 2. Missing Edit/Update Transaction
+Your own requirements file ([Budgetly.requierments.md](file:///d:/Budgetly/Budgetly.Documentation/Budgetly.requierments.md)) lists this as "to be implemented." Currently you can add and delete but **not edit** a transaction. This is a core feature gap.
+
+### 3. Balance Tracking Bug
+In `TransactionRepository.AddTransactionAsync`, you add the `Amount` to the user's balance:
+```csharp
+user.Balance += transaction.Amount;
+```
+But in [DeleteTransaction](file:///d:/Budgetly/Budgetly.Infrastructure/Repositories/TransactionRepository.cs#73-82), **you don't subtract it back**. This means deleting a transaction doesn't reverse its effect on the balance. This is a data integrity bug.
+
+### 4. Zero Tests
+There are **no unit tests, integration tests, or end-to-end tests** anywhere in the project. For a portfolio/production project, this is a significant gap. At minimum:
+- Unit tests for [AuthService](file:///d:/Budgetly/Budgetly.Application/Services/AuthService.cs#11-40) and [TransactionService](file:///d:/Budgetly/Budgetly.Application/Services/TransactionService.cs#12-162)
+- Integration tests for the API endpoints
+- Frontend component tests or E2E tests
+
+### 5. README Is a Default Scaffold
+The [README.md](file:///d:/Budgetly/README.md) is the auto-generated Angular CLI text. It doesn't describe what Budgetly actually is, how to set it up (both backend + frontend), what tech stack it uses, or show any screenshots. For a portfolio project, this is the first thing people see.
+
+### 6. API Design Inconsistencies
+
+| Issue | Details |
+|---|---|
+| [Token](file:///d:/Budgetly/Budgetly.Infrastructure/Services/SecurityServices.cs#22-48) on every `APIResponse<T>` | The [Token](file:///d:/Budgetly/Budgetly.Infrastructure/Services/SecurityServices.cs#22-48) property only makes sense on login responses, but it's baked into the generic response wrapper. |
+| `POST` for reading data | `get-transactions` uses `POST` instead of `GET` with query params. While acceptable for complex filters, it's non-standard REST. |
+| Action-verb URLs | Routes like `/add-transaction`, `/get-all-transactions` are RPC-style. RESTful convention would be `POST /api/transactions`, `GET /api/transactions`, etc. |
+| Missing error handling for GetTransactionDetail | If the transaction belongs to a different user and isn't found, the typo'd `TransctionNotFound` exception is thrown (note the typo). |
+
+### 7. Documentation
+The `Budgetly.Documentation/` folder has minimal content — a barely started requirements file and a [.docx](file:///d:/Budgetly/Budgetly.Documentation/Budgetly.docx) and [.drawio](file:///d:/Budgetly/Budgetly.Documentation/Budgetly.drawio) file. The requirements file has a typo in the filename (`requierments`).
+
+---
+
+## 📊 Scorecard
+
+| Category | Score | Notes |
+|---|:---:|---|
+| **Architecture** | 8/10 | Clean Architecture is well-applied |
+| **Code Quality** | 6/10 | Clean code, but bugs (balance) and missing null checks |
+| **Security** | 3/10 | SHA256 hashing and leaked secrets are deal-breakers |
+| **Testing** | 1/10 | No tests at all |
+| **Features** | 5/10 | Core CRUD + export works, but no edit, no dashboard content, no budget goals |
+| **Documentation** | 2/10 | Default README, empty requirements, no setup guide |
+| **Frontend** | 6/10 | Good structure, modern stack (Angular 21 + PrimeNG), but hard to assess UI polish without running it |
+| **DevOps/CI** | 2/10 | Empty `.github/workflows`, no CI/CD pipeline |
+
+**Weighted Overall: ~4.5/10** — Strong bones, but not production-ready yet.
+
+---
+
+## 🎯 Recommended Priority Actions
+
+1. **Fix the balance bug** in `DeleteTransaction` (quick win)
+2. **Switch to bcrypt/PBKDF2** for password hashing (security critical)
+3. **Move secrets to User Secrets** and add `.gitignore` for them
+4. **Implement Edit Transaction** (your own requirement)
+5. **Write a proper README** with project description, screenshots, setup instructions, and tech stack
+6. **Add at least a few unit tests** for the service layer
+7. **Set up a CI pipeline** — even a basic `dotnet build && dotnet test` GitHub Action
+
+---
+
+> **Bottom line:** You clearly understand software architecture and have built a real, functioning app. The foundation is much better than most WIP projects at this stage. The main gaps are in security, testing, and polish — all fixable. Keep going. 💪

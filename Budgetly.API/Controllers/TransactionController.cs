@@ -34,6 +34,27 @@ namespace Budgetly.API.Controllers
             return Ok(response);
         }
 
+        [HttpPut("edit-transaction/{transactionID}")]
+        public async Task<IActionResult> EditTransaction([FromRoute] int transactionID, [FromBody] AddEditTransaction addEditTransaction)
+        {
+            APIResponse<TransactionViewModel> response = new();
+
+            if (!ModelState.IsValid)
+            {
+                response.Success = false;
+                response.Message = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+
+                return BadRequest(response);
+            }
+
+            var transactionDTO = await transactionService.UpdateTransaction(transactionID, addEditTransaction);
+            response.Success = true;
+            response.Message = "Transaction updated successfully.";
+            response.Data = transactionDTO;
+
+            return Ok(response);
+        }
+
         [HttpGet("get-all-transactions")]
         public async Task<IActionResult> GetTransactions()
         {

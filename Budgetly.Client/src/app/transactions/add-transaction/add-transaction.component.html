@@ -4,8 +4,8 @@
         <button class="btn btn-link text-decoration-none p-0 mb-3" (click)="onCancel()">
             <i class="bi bi-arrow-left me-2"></i>Back to Transactions
         </button>
-        <h2 class="mb-2">Add New Transaction</h2>
-        <p class="text-muted mb-0">Record a new expenditure transaction</p>
+        <h2 class="mb-2">{{ isEditMode ? 'Edit Transaction' : 'Add New Transaction' }}</h2>
+        <p class="text-muted mb-0">{{ isEditMode ? 'Update your transaction details' : 'Record a new expenditure transaction' }}</p>
     </div>
 
     <!-- Form Section -->
@@ -162,7 +162,7 @@
                             @if (!sidebarService.appLoader) {
                             <i class="bi bi-check-circle me-2"></i>
                             }
-                            {{ sidebarService.appLoader ? 'Adding...' : 'Add Transaction' }}
+                            {{ sidebarService.appLoader ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Transaction' : 'Add Transaction') }}
                         </button>
                     </div>
                 </form>
